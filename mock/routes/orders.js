@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const util = require('../util');
-router.get('/_query', async (req, res) => {
+router.all('/_query', async (req, res) => {
   const data = {
     statusCode: 200,
     data: {
@@ -22,8 +22,8 @@ router.get('/_query', async (req, res) => {
       ],
     },
   };
-  await util.delay(4000);
-  res.status(500);
+  await util.delay(1000);
+  // res.status(500);
   res.json(data);
 });
 

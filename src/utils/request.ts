@@ -4,6 +4,10 @@ import { useLoginInfoStore } from '@/stores/loginInfo';
 import { utils } from '@/utils';
 import { useRequestStore } from '@/stores/request';
 
+type RequestError = Error & {
+  data: any;
+};
+
 export const http = axios.create({
   baseURL: window.g.VUE_APP_BASE_API + '/api',
   withCredentials: true,
@@ -17,7 +21,6 @@ http.interceptors.request.use(
     }
     const { addRequest } = useRequestStore();
     addRequest(config);
-    console.log(config);
     return config;
   },
   (error) => {
@@ -40,8 +43,8 @@ http.interceptors.response.use(
         window.location.href = data.data.url;
       } else if (status >= 500) {
         // throw new Error('Server is not response');
-        // Promise.reject('server is fail');
-        return { code: 500, success: false };
+        return Promise.reject(new Error(data));
+        // return { code: 500, success: false };
       }
     }
   }
