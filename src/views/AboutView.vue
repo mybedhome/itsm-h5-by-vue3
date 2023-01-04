@@ -4,6 +4,9 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import { getOrders } from '@/services/orders';
+</script>
 <style>
 @media (min-width: 1024px) {
   .about {

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import type { AxiosRequestConfig } from 'axios';
 import { utils } from '@/utils';
 export const useRequestStore = defineStore('request', () => {
-  const requestObject = ref<{ [propName: string]: AbortController }>({});
+  const request = ref<{ [propName: string]: AbortController }>({});
   const getRequestIdentifier = (config: AxiosRequestConfig) => {
     const data = utils.formDataToObject(config.data);
     return (
@@ -17,34 +17,32 @@ export const useRequestStore = defineStore('request', () => {
 
   function addRequest(config: AxiosRequestConfig) {
     const identifier = getRequestIdentifier(config);
-    if (requestObject.value[identifier]) {
+    if (request.value[identifier]) {
       removeRequest(config, identifier);
     }
     const controller = new AbortController();
     config.signal = controller.signal;
-    requestObject.value[identifier] = controller;
+    request.value[identifier] = controller;
   }
 
   function removeRequest(
     config: AxiosRequestConfig,
     requestIdentifier: string = ''
   ) {
-    let identifier = requestIdentifier || getRequestIdentifier(config);
-    identifier = identifier.replaceAll(/\\/g, '');
-    console.log('identifier', identifier);
-    if (requestObject.value[identifier]) {
-      requestObject.value[identifier].abort('重复请求被取消');
+    if (utils.isString(config.data)) {
+      config.data = JSON.parse(config.data);
     }
-
-    console.log('requestObject', requestObject.value);
-    console.log('keys', Object.keys(requestObject.value));
-    Object.keys(requestObject.value).forEach((v) => {
-      console.log('v==' + v);
-      console.log('identifier==', identifier);
-      console.log('------');
-      console.log(v === identifier);
-    });
-    delete requestObject.value[identifier];
+    const identifier = requestIdentifier || getRequestIdentifier(config);
+    if (request.value[identifier]) {
+      request.value[identifier].abort('重复请求被取消');
+      // delete request.value[identifier];
+    }
   }
-  return { addRequest, removeRequest, requestObject };
+
+  function clearPendingRequest() {
+    Object.keys(request.value).forEach((identifier) => {
+      request.value[identifier].abort('路由跳转前取消pending状态的请求');
+    });
+  }
+  return { addRequest, removeRequest, clearPendingRequest, request };
 });

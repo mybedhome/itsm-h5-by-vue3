@@ -22,7 +22,7 @@ router.all('/_query', async (req, res) => {
       ],
     },
   };
-  await util.delay(1000);
+  await util.delay(6000);
   // res.status(500);
   res.json(data);
 });

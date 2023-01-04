@@ -54,6 +54,14 @@ export const formDataToObject = (fd: FormData) => {
   }, {});
 };
 
+export const delay = <D>(timeout: number, data?: D) => {
+  return new Promise<D | undefined>((resolve) => {
+    setTimeout(() => {
+      resolve(data);
+    }, timeout);
+  });
+};
+
 export const utils = {
   isNull,
   isUndefined,
@@ -80,4 +88,5 @@ export const utils = {
   isPlainObject,
   parseJSONString,
   formDataToObject,
+  delay,
 };

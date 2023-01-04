@@ -1,0 +1,31 @@
+export enum HttpStatusCode {
+  BAD_REQUEST = 400,
+  UNAUTHORIZED = 401,
+  FORBIDDEN = 403,
+  NOT_FOUND = 404,
+  METHOD_NOT_ALLOWED = 405,
+  REQUEST_TIMEOUT = 408,
+  URI_TOO_LONG = 414,
+  INTERNAL_SERVER_ERROR = 500,
+  NOT_IMPLEMENTED = 501,
+  BAD_GATEWAY = 502,
+  SERVICE_UNAVAILABLE = 503,
+  GATEWAY_TIMEOUT = 504,
+  HTTP_VERSION_NOT_SUPPORTED = 505,
+}
+
+export enum HttpStatusText {
+  BAD_REQUEST = '客户端错误, 请检查网络是否连接, 目标主机是否支持跨域',
+  UNAUTHORIZED = '未授权, 请登录',
+  FORBIDDEN = '统一认证未授予ITSM服务权限, 5秒后为您跳转统一认证',
+  NOT_FOUND = '请求地址出错',
+  METHOD_NOT_ALLOWED = '请求方法不允许',
+  REQUEST_TIMEOUT = '请求超时',
+  URI_TOO_LONG = '请求URI太长',
+  INTERNAL_SERVER_ERROR = '服务器内部错误，详情请查看系统日志',
+  NOT_IMPLEMENTED = '服务未实现',
+  BAD_GATEWAY = '网关错误',
+  SERVICE_UNAVAILABLE = '服务不可用',
+  GATEWAY_TIMEOUT = '网关超时',
+  HTTP_VERSION_NOT_SUPPORTED = 'HTTP版本不受支持',
+}
