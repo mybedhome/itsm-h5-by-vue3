@@ -20,11 +20,28 @@ const router = createRouter({
           name: 'Workbench',
           component: () => import('@/views/HomeView.vue'),
         },
+        {
+          path: 'orderManage',
+          name: 'OrderManage',
+          children: [
+            {
+              path: 'create',
+              name: 'CreateOrder',
+              component: () => import('@/views/orderManage/CreateOrder.vue'),
+            },
+            {
+              path: 'detail',
+              name: 'OrderDetail',
+              component: () => import('@/views/orderManage/OrderDetail.vue'),
+            },
+          ],
+        },
       ],
     },
   ],
 });
 
+// 路由跳转前取消所有未完成的请求
 router.beforeEach(() => {
   const { clearPendingRequest } = useRequestStore();
   clearPendingRequest();

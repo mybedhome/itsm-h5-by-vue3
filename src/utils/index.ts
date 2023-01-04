@@ -43,7 +43,7 @@ const parseJSONString = (arg: string, failResult = {}) => {
 };
 
 // 将formData转换为纯文本对象
-export const formDataToObject = (fd: FormData) => {
+const formDataToObject = (fd: FormData) => {
   if (!(fd instanceof FormData)) return fd;
   const arr = Array.from(fd.keys());
   const uniqueArr = Array.from(new Set(arr));
@@ -54,7 +54,7 @@ export const formDataToObject = (fd: FormData) => {
   }, {});
 };
 
-export const delay = <D>(timeout: number, data?: D) => {
+const delay = <D>(timeout: number, data?: D) => {
   return new Promise<D | undefined>((resolve) => {
     setTimeout(() => {
       resolve(data);

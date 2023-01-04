@@ -2,6 +2,7 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import type { AxiosRequestConfig } from 'axios';
 import { utils } from '@/utils';
+
 export const useRequestStore = defineStore('request', () => {
   const request = ref<{ [propName: string]: AbortController }>({});
   const getRequestIdentifier = (config: AxiosRequestConfig) => {
@@ -35,7 +36,7 @@ export const useRequestStore = defineStore('request', () => {
     const identifier = requestIdentifier || getRequestIdentifier(config);
     if (request.value[identifier]) {
       request.value[identifier].abort('重复请求被取消');
-      // delete request.value[identifier];
+      delete request.value[identifier];
     }
   }
 

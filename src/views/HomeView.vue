@@ -5,7 +5,7 @@ import { utils } from '@/utils/';
 import { getOrders } from '@/services/orders';
 import { useRequest } from '@/composables/useRequest';
 import { ref, reactive } from 'vue';
-import { RouterLink } from 'vue-router';
+
 const id = ref(1);
 const payload = ref({
   id: id.value,
@@ -41,6 +41,6 @@ getOrders(id.value)
     <h3>data: {{ data }}</h3>
     <button @click="setId">更新id</button>
   </main> -->
-  <RouterLink to="/about" />
-  <TheWelcome />
+  <RouterLink to="/about">跳转关于</RouterLink>
+  <!-- <TheWelcome /> -->
 </template>

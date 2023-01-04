@@ -1,12 +1,16 @@
-import axios from 'axios';
+import axios, { AxiosHeaders } from 'axios';
 import { useLoginInfoStore } from '@/stores/loginInfo';
-import { delay } from '@/utils';
+import { utils } from '@/utils';
 import { useRequestStore } from '@/stores/request';
 import { HttpStatusCode, HttpStatusText } from '@/types/HttpStatusMap';
 export type ApiErrorResult = {
   message: string;
   name: string;
   data: any;
+};
+
+type CustomAxiosHeaders = AxiosHeaders & {
+  Authorization: string;
 };
 
 export const http = axios.create({
@@ -17,7 +21,8 @@ export const http = axios.create({
 
 http.interceptors.request.use((config) => {
   if (config.headers) {
-    config.headers['Authorization'] = useLoginInfoStore().loginInfo.token;
+    (config.headers as CustomAxiosHeaders).Authorization =
+      useLoginInfoStore().loginInfo.token;
   }
   const { addRequest } = useRequestStore();
   addRequest(config);
@@ -51,7 +56,7 @@ http.interceptors.response.use(
         window.location.href = data?.data?.url;
       } else if (status === HttpStatusCode.FORBIDDEN) {
         // 5秒后重定向到统一认证
-        delay(5000).then(() => (window.location.href = data?.url));
+        utils.delay(5000).then(() => (window.location.href = data?.url));
       }
       return Promise.reject(errorResult);
     }
