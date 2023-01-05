@@ -5,6 +5,7 @@ export enum RouteName {
   HOME = 'home',
   BES = 'bes',
   WORKBENCH = 'workbentch',
+  STATISTICS = 'statistics',
   ORDERS = 'orders',
   ORDERSADD = 'orders-add',
   ORDERSDETAIL = 'orders-detail',
@@ -29,6 +30,11 @@ const router = createRouter({
           path: 'workbench',
           name: RouteName.WORKBENCH,
           component: () => import('@/views/workbench/index.vue'),
+        },
+        {
+          path: 'statistics',
+          name: RouteName.STATISTICS,
+          component: () => import('@/views/statistics/index.vue'),
         },
         {
           path: 'orders',
@@ -61,7 +67,7 @@ router.afterEach((to, from) => {
   const toDepth = to.path.split('/').length;
   const fromDepth = from.path.split('/').length;
   to.meta.transitionName =
-    toDepth < fromDepth ? 'van-slide-left' : 'van-slide-right';
+    toDepth < fromDepth ? 'van-slide-right' : 'van-slide-left';
 });
 
 export default router;

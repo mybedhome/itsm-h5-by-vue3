@@ -5,18 +5,15 @@
         <RouterLink :to="{ name: RouteName.ORDERSDETAIL }"
           >go order detail</RouterLink
         >
-        <VanButton>test{{ RouteName.ORDERSDETAIL }}</VanButton>
       </div>
       <div style="height: 40px; border: 1px solid">kkkk</div>
     </div>
-    <van-tabbar v-model="active">
-      <van-tabbar-item icon="home-o">工作台</van-tabbar-item>
-      <van-tabbar-item icon="setting-o">统计</van-tabbar-item>
-    </van-tabbar>
+    <TheTabbar />
   </div>
 </template>
 
 <script setup lang="ts">
+// import TheTabbar from '@/components/TheTabbar.vue';
 import { RouteName } from '@/router/index';
 import { ref } from 'vue';
 const active = ref(0);
