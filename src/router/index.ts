@@ -1,38 +1,48 @@
 import { useRequestStore } from '@/stores/request';
-import { createRouter, createWebHashHistory } from 'vue-router';
-// import HomeView from '../views/HomeView.vue';
+import { createRouter, createWebHashHistory, type RouteMeta } from 'vue-router';
 
+export enum RouteName {
+  HOME = 'home',
+  BES = 'bes',
+  WORKBENCH = 'workbentch',
+  ORDERS = 'orders',
+  ORDERSADD = 'orders-add',
+  ORDERSDETAIL = 'orders-detail',
+}
+export type CustomRouteMeta = RouteMeta & {
+  transitionName: string;
+};
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: RouteName.HOME,
       redirect: '/bes',
     },
     {
       path: '/bes',
-      name: 'bes',
-      redirect: { name: 'Workbench' },
+      name: RouteName.BES,
+      redirect: { name: RouteName.WORKBENCH },
       children: [
         {
           path: 'workbench',
-          name: 'Workbench',
-          component: () => import('@/views/HomeView.vue'),
+          name: RouteName.WORKBENCH,
+          component: () => import('@/views/workbench/index.vue'),
         },
         {
-          path: 'orderManage',
-          name: 'OrderManage',
+          path: 'orders',
+          name: RouteName.ORDERS,
           children: [
             {
-              path: 'create',
-              name: 'CreateOrder',
-              component: () => import('@/views/orderManage/CreateOrder.vue'),
+              path: 'add',
+              name: RouteName.ORDERSADD,
+              component: () => import('@/views/orders/OrderAdd.vue'),
             },
             {
               path: 'detail',
-              name: 'OrderDetail',
-              component: () => import('@/views/orderManage/OrderDetail.vue'),
+              name: RouteName.ORDERSDETAIL,
+              component: () => import('@/views/orders/OrderDetail.vue'),
             },
           ],
         },
@@ -45,6 +55,13 @@ const router = createRouter({
 router.beforeEach(() => {
   const { clearPendingRequest } = useRequestStore();
   clearPendingRequest();
+});
+
+router.afterEach((to, from) => {
+  const toDepth = to.path.split('/').length;
+  const fromDepth = from.path.split('/').length;
+  to.meta.transitionName =
+    toDepth < fromDepth ? 'van-slide-left' : 'van-slide-right';
 });
 
 export default router;

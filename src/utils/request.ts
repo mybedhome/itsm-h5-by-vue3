@@ -1,4 +1,4 @@
-import axios, { AxiosHeaders } from 'axios';
+import axios, { type RawAxiosRequestHeaders } from 'axios';
 import { useLoginInfoStore } from '@/stores/loginInfo';
 import { utils } from '@/utils';
 import { useRequestStore } from '@/stores/request';
@@ -9,7 +9,7 @@ export type ApiErrorResult = {
   data: any;
 };
 
-type CustomAxiosHeaders = AxiosHeaders & {
+type CustomAxiosHeaders = RawAxiosRequestHeaders & {
   Authorization: string;
 };
 
