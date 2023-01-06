@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="60px" viewBox="0 0 64 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>资源-名称</title>
+    <defs>
+        <linearGradient x1="50%" y1="29.7395402%" x2="50%" y2="80.8177191%" id="linearGradient-1">
+            <stop stop-color="#4B6EEF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#4B6EEF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="27.5794068%" x2="50%" y2="80.8177191%" id="linearGradient-2">
+            <stop stop-color="#4B6EEF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#4B6EEF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#6180F0" offset="0%"></stop>
+            <stop stop-color="#6180F0" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="100%" x2="50%" y2="5.0031935%" id="linearGradient-4">
+            <stop stop-color="#E1E7FF" offset="0%"></stop>
+            <stop stop-color="#E1E7FF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-5">
+            <stop stop-color="#4B6EEF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#4B6EEF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Bomc-工单" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.5">
+        <g id="投诉工单--查看投诉工单" transform="translate(-294.000000, -93.000000)">
+            <g id="资源-名称" transform="translate(294.000000, 93.000000)">
+                <g id="5" transform="translate(0.000000, 1.949615)">
+                    <polygon id="路径-20" fill="url(#linearGradient-1)" opacity="0.299600291" points="0 -5.58161311e-14 0 39.2336655 31.3769867 57.4568016 31.4449317 17.3337963"></polygon>
+                    <polygon id="路径-20备份-2" fill="url(#linearGradient-2)" opacity="0.296920422" transform="translate(47.031508, 28.728401) scale(-1, 1) translate(-47.031508, -28.728401) " points="31.3090418 -5.58161311e-14 31.3090418 39.2336655 62.6861732 57.4568016 62.7539735 17.3337963"></polygon>
+                    <polygon id="路径" fill="#4B6EEF" opacity="0.8" points="62.7539735 35.8299595 62.7539735 39.2336655 31.4447368 57.4173279 31.3768421 57.4568016 0 39.2336655 0 35.8299595 31.3768421 53.66417"></polygon>
+                    <polygon id="路径" fill="url(#linearGradient-3)" opacity="0.8" transform="translate(31.376987, 28.327591) scale(-1, -1) translate(-31.376987, -28.327591) " points="62.7539735 17.51417 62.7539735 20.917876 31.4447368 39.1015385 31.3768421 39.1410121 -8.97527666e-15 20.917876 -8.97527666e-15 17.51417 31.3768421 35.3483806"></polygon>
+                </g>
+                <g id="1" transform="translate(15.174565, 23.684211)">
+                    <polygon id="路径-21" fill="#A5B5F5" points="0 14.9914212 16.194332 24.8014855 16.194332 17.6420163 0 7.99224726"></polygon>
+                    <polygon id="路径-21备份" fill="#6A84FF" transform="translate(24.291498, 16.396866) scale(-1, 1) translate(-24.291498, -16.396866) " points="16.194332 14.9914212 32.388664 24.8014855 32.388664 17.6420163 16.194332 7.99224726"></polygon>
+                    <polygon id="路径-22" fill="url(#linearGradient-4)" points="0 7.99224726 16.194332 17.6420163 32.388664 7.99224726 16.194332 0"></polygon>
+                    <polygon id="路径-23" fill="url(#linearGradient-5)" points="0 7.99224726 16.194332 17.6420163 32.388664 7.99224726 32.388664 2.15924426 0 2.15924426"></polygon>
+                </g>
+                <g id="1备份" transform="translate(15.174565, 11.842105)">
+                    <polygon id="路径-21" fill="#A5B5F5" points="0 14.9914212 16.194332 24.8014855 16.194332 17.6420163 0 7.99224726"></polygon>
+                    <polygon id="路径-21备份" fill="#6A84FF" transform="translate(24.291498, 16.396866) scale(-1, 1) translate(-24.291498, -16.396866) " points="16.194332 14.9914212 32.388664 24.8014855 32.388664 17.6420163 16.194332 7.99224726"></polygon>
+                    <polygon id="路径-22" fill="url(#linearGradient-4)" points="0 7.99224726 16.194332 17.6420163 32.388664 7.99224726 16.194332 0"></polygon>
+                    <polygon id="路径-23" fill="url(#linearGradient-5)" points="0 7.99224726 16.194332 17.6420163 32.388664 7.99224726 32.388664 2.15924426 0 2.15924426"></polygon>
+                </g>
+                <g id="1备份-2" transform="translate(15.174565, 0.310391)">
+                    <polygon id="路径-21" fill="#A5B5F5" points="0 14.9914212 16.194332 24.8014855 16.194332 17.6420163 0 7.99224726"></polygon>
+                    <polygon id="路径-21备份" fill="#6A84FF" transform="translate(24.291498, 16.396866) scale(-1, 1) translate(-24.291498, -16.396866) " points="16.194332 14.9914212 32.388664 24.8014855 32.388664 17.6420163 16.194332 7.99224726"></polygon>
+                    <polygon id="路径-22" fill="url(#linearGradient-4)" points="0 7.99224726 16.194332 17.6420163 32.388664 7.99224726 16.194332 0"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,14 +1,17 @@
 <script setup lang="ts">
+import { themeVars } from './constants/theme-vars';
 import type { CustomRouteMeta } from './router';
 </script>
 
 <template>
   <div id="root">
-    <router-view v-slot="{ Component, route }">
-      <transition :name="(route.meta as CustomRouteMeta).transitionName">
-        <component :is="Component" :key="$route.path" />
-      </transition>
-    </router-view>
+    <van-config-provider :theme-vars="themeVars">
+      <router-view v-slot="{ Component, route }">
+        <transition :name="(route.meta as CustomRouteMeta).transitionName">
+          <component :is="Component" :key="$route.path" />
+        </transition>
+      </router-view>
+    </van-config-provider>
   </div>
 </template>
 

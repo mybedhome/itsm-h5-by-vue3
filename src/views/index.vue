@@ -1,10 +1,10 @@
 <template>
   <div>
-    <RouterView />
+    <!-- <RouterView />
     <van-tabbar v-model="active" @change="handleChange">
       <van-tabbar-item icon="home-o">工作台</van-tabbar-item>
       <van-tabbar-item icon="setting-o">统计</van-tabbar-item>
-    </van-tabbar>
+    </van-tabbar> -->
   </div>
 </template>
 

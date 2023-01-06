@@ -1,24 +1,45 @@
-import { createApp, type ComponentOptions } from 'vue';
+import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 
 import App from './App.vue';
 import router from './router';
-import { Button, Tabbar, TabbarItem } from 'vant';
+import {
+  ConfigProvider,
+  Button,
+  Tabbar,
+  TabbarItem,
+  Search,
+  Grid,
+  GridItem,
+  Icon,
+} from 'vant';
 import './assets/base.css';
 import 'vant/lib/index.css';
+import '@vant/touch-emulator';
+import type { VueModuleNamespace } from './types/VueModuleNamespace';
 const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
 
-app.use(Button).use(Tabbar).use(TabbarItem);
+app
+  .use(ConfigProvider)
+  .use(Button)
+  .use(Icon)
+  .use(Tabbar)
+  .use(TabbarItem)
+  .use(Search)
+  .use(Grid)
+  .use(GridItem);
 
 const registerGlobalComponent = () => {
-  const components = import.meta.glob('./components/**/*.vue', { eager: true });
-  Object.entries(components).forEach(([key, module]) => {
-    const result = key.match(/\w+(?!\/)(?=\.)/g);
+  const components = import.meta.glob('./components/**/*.vue', {
+    eager: true,
+  }) as { [propName: string]: VueModuleNamespace };
+  Object.entries(components).forEach(([path, module]) => {
+    const result = path.match(/\w+(?!\/)(?=\.)/g);
     if (result) {
-      app.component(result[0], (module as ComponentOptions).default);
+      app.component(result[0], module.default);
     }
   });
 };
