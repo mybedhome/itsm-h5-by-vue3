@@ -22,6 +22,8 @@ router.all('/_query', async (req, res) => {
       ],
     },
   };
+  const random = util.getRandom(10);
+  console.log('random', random);
   await util.delay(6000);
   // res.status(500);
   res.json(data);

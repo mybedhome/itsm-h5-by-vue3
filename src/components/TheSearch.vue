@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="search-box">
     <van-search
       v-model="value"
       v-bind="$attrs"
@@ -58,6 +58,9 @@ export default {
 </script>
 
 <style scoped>
+.search-box {
+  width: 100%;
+}
 .action-button {
   width: 60px;
   vertical-align: middle;

@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div>
-      <div class="search-block">
-        <TheSearch
-          placeholder="请输入流水号或标题"
-          v-model="searchText"
-          @focus="onFocus"
-          @action="handleAction"
-        />
-      </div>
+    <section class="search-section">
+      <TheSearch
+        placeholder="请输入流水号或标题"
+        v-model="searchText"
+        @focus="onFocus"
+        @action="handleAction"
+      />
+    </section>
+    <section class="content-section">
       <div class="menu-block">
         <van-grid :border="false" :icon-size="67">
           <van-grid-item
@@ -42,7 +42,8 @@
           <span>2022-10-23到2023-01-06</span>
         </li>
       </ul>
-    </div>
+      <OrderList />
+    </section>
     <TheTabbar />
   </div>
 </template>
@@ -50,6 +51,7 @@
 <script setup lang="ts">
 import { RouteName } from '@/router/index';
 import { ref } from 'vue';
+import OrderList from '../components/OrderList.vue';
 import createIcon from '@/assets/create.svg';
 import todoIcon from '@/assets/todo.svg';
 import draftIcon from '@/assets/draft.svg';
@@ -79,9 +81,16 @@ const handleAction = (action: string) => {
 export default { name: 'WorkbenchView' };
 </script>
 <style scoped lang="scss">
-.container {
-  height: 800px;
-  background-color: orange;
+@import '@/styles/variables.scss';
+
+.search-section {
+  display: flex;
+  align-items: center;
+  height: 55px;
+}
+.content-section {
+  height: calc(100vh - 105px);
+  overflow: auto;
 }
 .menu-block {
   background-color: #fff;
@@ -97,11 +106,12 @@ export default { name: 'WorkbenchView' };
     align-items: center;
     justify-content: space-between;
     padding-right: 5px;
-    color: #2e2f30;
+    color: $primaryTextColor;
   }
   li {
-    color: #828283;
+    color: $secondaryTextColor;
     margin-bottom: 4px;
+    padding-right: 40px;
   }
 }
 </style>
