@@ -12,6 +12,12 @@ import {
   Grid,
   GridItem,
   Icon,
+  Popup,
+  Calendar,
+  ActionSheet,
+  Form,
+  Field,
+  Picker,
 } from 'vant';
 import './assets/base.css';
 import 'vant/lib/index.css';
@@ -24,6 +30,12 @@ app.use(router);
 
 app
   .use(ConfigProvider)
+  .use(Popup)
+  .use(Calendar)
+  .use(ActionSheet)
+  .use(Form)
+  .use(Field)
+  .use(Picker)
   .use(Button)
   .use(Icon)
   .use(Tabbar)

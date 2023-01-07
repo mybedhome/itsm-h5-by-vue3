@@ -10,9 +10,7 @@
           >
         </div>
         <div class="order-info-date">2020-11-28 17:23:15</div>
-        <div class="order-info-desc">
-          这是工单标题这是工单标题这是工单标题这是工单标题这是工单标题
-        </div>
+        <div class="order-info-desc">这是工单标题这是工单标题这是</div>
       </div>
     </li>
   </ul>
@@ -77,7 +75,7 @@ const getOrderStatusClass = (status: number) => {
           color: #ffaa18;
         }
         &-finished {
-          color: #0097ff;
+          color: $primaryColor;
         }
         &-revoked {
           color: #b9bec9;

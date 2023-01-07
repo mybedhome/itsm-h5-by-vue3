@@ -9,6 +9,8 @@ export enum RouteName {
   ORDERS = 'orders',
   ORDERSADD = 'orders-add',
   ORDERSDETAIL = 'orders-detail',
+  NOTFOUND = 'not-found',
+  NOPERMISSIONS = 'no-permissions',
 }
 export type CustomRouteMeta = RouteMeta & {
   transitionName: string;
@@ -29,12 +31,7 @@ const router = createRouter({
         {
           path: 'workbench',
           name: RouteName.WORKBENCH,
-          component: () => import('@/views/workbench/index.vue'),
-        },
-        {
-          path: 'statistics',
-          name: RouteName.STATISTICS,
-          component: () => import('@/views/statistics/index.vue'),
+          component: () => import('@/views/index.vue'),
         },
         {
           path: 'orders',
@@ -52,7 +49,17 @@ const router = createRouter({
             },
           ],
         },
+        {
+          path: 'no-permissions',
+          name: RouteName.NOPERMISSIONS,
+          component: () => import('@/views/error/NoPermissions.vue'),
+        },
       ],
+    },
+    {
+      path: '/:pathMatch*',
+      name: RouteName.NOTFOUND,
+      component: () => import('@/views/error/NotFound.vue'),
     },
   ],
 });

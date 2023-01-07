@@ -1,19 +1,19 @@
 import { utils } from '@/utils';
-import { ref, watch, isRef, isProxy } from 'vue';
+import { ref, watch, isRef, isProxy, type WatchSource } from 'vue';
 import type { Ref } from 'vue';
 import type { ApiErrorResult } from '@/utils/request';
 
-type Fetcher<T> = (depends: any) => Promise<T>;
+type Fetcher<T> = (depends: WatchSource) => Promise<T>;
 type RequestOptions = {
   // 当响应式ref依赖发生变化时是否自动运行fetcher函数
   refetch?: boolean;
-  // 是否深度监听depends依赖
+  // 是否深度监听depends依赖, refetch为true时生效
   deep?: boolean;
 };
 
 function useRequest<T>(
   fetcher: Fetcher<T>,
-  depends?: any,
+  depends?: WatchSource,
   options?: RequestOptions
 ) {
   const isLoading = ref(true);
@@ -51,7 +51,7 @@ function useRequest<T>(
     utils.isFunction(depends) ||
     utils.isArray(depends);
 
-  if (requestOptions.refetch && isWatchSource) {
+  if (depends && requestOptions.refetch && isWatchSource) {
     watch(depends, run, { immediate: true, deep: requestOptions.deep });
   } else {
     run();

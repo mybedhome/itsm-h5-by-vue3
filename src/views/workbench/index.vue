@@ -43,15 +43,17 @@
         </li>
       </ul>
       <OrderList />
+      <OrderFilter v-model:show="isShowOrderFilter" />
     </section>
-    <TheTabbar />
+    <!-- <TheTabbar /> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { RouteName } from '@/router/index';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import OrderList from '../components/OrderList.vue';
+import OrderFilter from '../components/OrderFilter.vue';
 import createIcon from '@/assets/create.svg';
 import todoIcon from '@/assets/todo.svg';
 import draftIcon from '@/assets/draft.svg';
@@ -73,13 +75,18 @@ const menus = ref([
 const onFocus = () => {
   console.log('focus2');
 };
+
+const actionType = ref('');
+const isShowOrderFilter = ref(false);
 const handleAction = (action: string) => {
-  console.log('action', action);
+  isShowOrderFilter.value = action === '筛选' ? true : false;
 };
 </script>
+
 <script lang="ts">
 export default { name: 'WorkbenchView' };
 </script>
+
 <style scoped lang="scss">
 @import '@/styles/variables.scss';
 
