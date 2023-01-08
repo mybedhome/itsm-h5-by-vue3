@@ -29,6 +29,8 @@ const isSet = isWhatType('Set');
 const isWeakSet = isWhatType('WeakSet');
 const isPromise = isWhatType('Promise');
 
+const isValidArray = (arg: any) => Array.isArray(arg) && arg.length > 0;
+
 const isPlainObject = (arg: { constructor?: Function }): boolean =>
   !isNil(arg) && arg.constructor === Object;
 
@@ -132,6 +134,7 @@ export const utils = {
   isSet,
   isWeakSet,
   isPromise,
+  isValidArray,
   isPlainObject,
   parseJSONString,
   formDataToObject,

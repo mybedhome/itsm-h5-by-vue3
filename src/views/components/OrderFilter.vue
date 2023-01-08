@@ -3,19 +3,19 @@
     <van-action-sheet v-model:show="isShow" title="筛选">
       <div class="content">
         <van-form>
-          <div class="form-item">
-            <div class="label">服务</div>
+          <div class="form-item" v-for="col in columns" :key="col.key">
+            <div class="label">{{ col.label }}</div>
             <van-field
-              v-model="service"
+              v-model="model[col.key as OrderFilterKey]"
               is-link
               readonly
-              placeholder="点击选择服务"
-              :right-icon="service ? 'close' : ''"
-              @click="showPicker = true"
-              @click-right-icon.stop="service = ''"
+              :placeholder="`点击选择${col.label}`"
+              :right-icon="model[col.key as OrderFilterKey] && col.key != OrderFilterKey.CREATE_TIME ? 'close' : ''"
+              @click="onFieldClick(col.key, col.data, col.label)"
+              @click-right-icon.stop="onFieldClear(col.key, col.label)"
             />
           </div>
-          <div class="form-item">
+          <!-- <div class="form-item">
             <div class="label">状态</div>
             <van-field
               v-model="status"
@@ -23,7 +23,7 @@
               readonly
               placeholder="点击选择状态"
               :right-icon="status ? 'close' : ''"
-              @click="showPicker = true"
+              @click="onFieldClick('status')"
               @click-right-icon.stop="status = 0"
             />
           </div>
@@ -35,7 +35,7 @@
               readonly
               placeholder="点击选择发起人"
               :right-icon="creator ? 'close' : ''"
-              @click="showPicker = true"
+              @click="onFieldClick('creator')"
               @click-right-icon.stop="creator = ''"
             />
           </div>
@@ -47,18 +47,26 @@
               readonly
               placeholder="点击选择发起时间"
               :right-icon="createTime ? 'close' : ''"
-              @click="showCalendar = true"
+              @click="onFieldClick('createTime')"
               @click-right-icon.stop="handleClearField"
             />
-          </div>
+          </div> -->
           <van-popup v-model:show="showPicker" position="bottom">
             <van-picker
-              :columns="columns"
+              :columns="pickerData"
+              :columns-field-names="customFieldName"
+              :title="activeLabel"
               @confirm="onConfirm"
               @cancel="showPicker = false"
             />
           </van-popup>
-          <van-calendar v-model:show="showCalendar" @confirm="onConfirm" />
+          <van-calendar
+            v-model:show="showCalendar"
+            @confirm="onConfirmDate"
+            :default-date="defaultDate"
+            :min-date="minDate"
+            type="range"
+          />
         </van-form>
       </div>
     </van-action-sheet>
@@ -66,9 +74,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs, computed } from 'vue';
+import { ref, computed } from 'vue';
 import type { PickerConfirmEventParams, PickerOption } from 'vant';
-const props = defineProps(['show']);
+import { OrderFilterKey, type Column } from '@/types/common';
+import { utils } from '@/utils';
+import dayjs from 'dayjs';
+type SelectFilterItem = {
+  label: string;
+  name: string;
+  value: string | Date[];
+};
+
+const props = defineProps<{
+  show: boolean;
+  columns: Column[];
+}>();
+
 const emit = defineEmits(['update:show']);
 const isShow = computed({
   get() {
@@ -80,27 +101,102 @@ const isShow = computed({
 });
 
 const service = ref('');
-const status = ref(1);
+const status = ref('');
 const creator = ref('');
 const createTime = ref('');
+const defaultDate = ref([dayjs().subtract(1, 'month').toDate(), new Date()]);
+const minDate = dayjs().subtract(2, 'year').toDate();
+const model = ref({
+  service: '',
+  status: '',
+  creator: '',
+  createTime: '',
+});
+
+type modelKey = keyof typeof model.value;
+
+const activeKey = ref<modelKey>('' as modelKey);
+const activeLabel = ref('');
+
+// 确认选中的过滤条件
+const selected = ref<SelectFilterItem[]>([]);
+
+const customFieldName = computed(() => {
+  switch (activeKey.value) {
+    case OrderFilterKey.SERVICE:
+      return { text: 'serviceName', value: 'serviceId' };
+    case OrderFilterKey.CREATOR:
+      return { text: 'firstName', value: 'id' };
+    default:
+      return { text: 'text', value: 'value' };
+  }
+});
+const pickerData = ref([]);
 
 const showCalendar = ref(false);
 const showPicker = ref(false);
-const columns: PickerOption[] = [
-  { text: '杭州', value: 'Hangzhou' },
-  { text: '宁波', value: 'Ningbo' },
-  { text: '温州', value: 'Wenzhou' },
-  { text: '绍兴', value: 'Shaoxing' },
-  { text: '湖州', value: 'Huzhou' },
-];
-const onConfirm = ({ selectedOptions }: PickerConfirmEventParams) => {
-  service.value = selectedOptions ? (selectedOptions[0]?.text as string) : '';
+
+const onFieldClick = (field: modelKey, data: any, label: string) => {
+  activeKey.value = field;
+  activeLabel.value = label;
+  if (field === OrderFilterKey.CREATE_TIME) {
+    showCalendar.value = true;
+  } else {
+    pickerData.value = data;
+    showPicker.value = true;
+  }
+};
+
+const findIndex = (label: string) => {
+  return selected.value.findIndex((item) => item.label === label);
+};
+
+const onConfirm = (params: PickerConfirmEventParams) => {
+  const selectedOptions = params.selectedOptions as Array<
+    Record<string, string>
+  >;
+
+  const text = customFieldName.value.text;
+  const id = customFieldName.value.value;
+  const name = selectedOptions[0][text] as modelKey;
+  const value = selectedOptions[0][id];
+
+  model.value[activeKey.value] = name;
+
+  const index = findIndex(activeLabel.value);
+  const item = { name, value, label: activeLabel.value };
+  if (index === -1) {
+    selected.value.push(item);
+  } else {
+    selected.value.splice(index, 1, item);
+  }
+
   showPicker.value = false;
 };
 
-const handleClearField = (event: MouseEvent) => {
-  event.stopPropagation();
-  service.value = '';
+const onConfirmDate = ([beigin, end]: Date[]) => {
+  const mode = 'YYYY/MM/DD';
+  model.value.createTime = `${dayjs(beigin).format(mode)} - ${dayjs(end).format(
+    mode
+  )}`;
+  const index = findIndex(activeLabel.value);
+  const item = {
+    name: model.value.createTime,
+    value: [beigin.getTime(), end.getTime()],
+    label: activeLabel.value,
+  };
+  if (index === -1) {
+    selected.value.push(item);
+  } else {
+    selected.value.splice(index, 1, item);
+  }
+  showCalendar.value = false;
+};
+
+const onFieldClear = (key: modelKey, label: string) => {
+  model.value[key] = '';
+  const index = findIndex(label);
+  selected.value.splice(index, 1);
 };
 </script>
 

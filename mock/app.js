@@ -1,11 +1,23 @@
 const express = require('express');
 const app = express();
+const logger = require('morgan');
 const OrdersRouter = require('./routes/orders');
+const ServiceRouter = require('./routes/service');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(logger('dev'));
+
+app.use('/*', (req, res, next) => {
+  res.body = {
+    statusCode: 200,
+    success: true,
+  };
+  next();
+});
 
 app.use('/orders', OrdersRouter);
+app.use('/service', ServiceRouter);
 
 app.use(function (err, req, res, next) {
   res.locals.message = err.message;

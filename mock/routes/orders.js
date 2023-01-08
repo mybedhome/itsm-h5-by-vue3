@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 const util = require('../util');
-router.all('/_query', async (req, res) => {
+router.get('/_query', async (req, res) => {
   const data = {
-    statusCode: 200,
+    ...res.body,
     data: {
       items: [
         {
@@ -23,10 +23,19 @@ router.all('/_query', async (req, res) => {
     },
   };
   const random = util.getRandom(10);
-  console.log('random', random);
   await util.delay(6000);
   // res.status(500);
   res.json(data);
+});
+
+router.get('/engineUsers', (req, res) => {
+  res.json({
+    ...res.body,
+    data: [
+      { id: util.guid(), firstName: 'kevin' },
+      { id: util.guid(), firstName: 'rose' },
+    ],
+  });
 });
 
 module.exports = router;

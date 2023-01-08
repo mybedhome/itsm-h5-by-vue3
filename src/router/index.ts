@@ -9,6 +9,8 @@ export enum RouteName {
   ORDERS = 'orders',
   ORDERSADD = 'orders-add',
   ORDERSDETAIL = 'orders-detail',
+  ORDERTODO = 'orders-todo',
+  ORDERDRAFT = 'orders-draft',
   NOTFOUND = 'not-found',
   NOPERMISSIONS = 'no-permissions',
 }
@@ -47,8 +49,19 @@ const router = createRouter({
               name: RouteName.ORDERSDETAIL,
               component: () => import('@/views/orders/OrderDetail.vue'),
             },
+            {
+              path: 'todo',
+              name: RouteName.ORDERTODO,
+              component: () => import('@/views/workbench/index.vue'),
+            },
+            {
+              path: 'draft',
+              name: RouteName.ORDERDRAFT,
+              component: () => import('@/views/workbench/index.vue'),
+            },
           ],
         },
+
         {
           path: 'no-permissions',
           name: RouteName.NOPERMISSIONS,

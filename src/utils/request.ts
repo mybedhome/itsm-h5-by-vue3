@@ -1,4 +1,8 @@
-import axios, { type RawAxiosRequestHeaders } from 'axios';
+import axios, {
+  type AxiosRequestConfig,
+  type RawAxiosRequestHeaders,
+  type AxiosResponse,
+} from 'axios';
 import { useLoginInfoStore } from '@/stores/loginInfo';
 import { utils } from '@/utils';
 import { useRequestStore } from '@/stores/request';
@@ -9,17 +13,23 @@ export type ApiErrorResult = {
   data: any;
 };
 
+export type ApiSuccessResult<T = any> = {
+  statusCode: number;
+  success: boolean;
+  data: T;
+};
+
 type CustomAxiosHeaders = RawAxiosRequestHeaders & {
   Authorization: string;
 };
 
-export const http = axios.create({
+const request = axios.create({
   baseURL: window.g.VUE_APP_BASE_API + '/api',
   withCredentials: true,
   timeout: 60 * 1000,
 });
 
-http.interceptors.request.use((config) => {
+request.interceptors.request.use((config) => {
   if (config.headers) {
     (config.headers as CustomAxiosHeaders).Authorization =
       useLoginInfoStore().loginInfo.token;
@@ -29,11 +39,12 @@ http.interceptors.request.use((config) => {
   return config;
 });
 
-http.interceptors.response.use(
-  (response) => {
+request.interceptors.response.use(
+  (response: AxiosResponse<ApiSuccessResult>) => {
     const { removeRequest } = useRequestStore();
+    // 请求完成从store里移除
     removeRequest(response.config);
-    return response.data;
+    return response.data.data;
   },
   (error) => {
     if (error.__CANCEL__ || error.config.signal.aborted) {
@@ -62,3 +73,31 @@ http.interceptors.response.use(
     }
   }
 );
+
+class Http {
+  async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return request.get(url, config);
+  }
+  async post<T>(
+    url: string,
+    data: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    return request.post(url, data, config);
+  }
+  async put<T>(
+    url: string,
+    data: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    return request.post(url, data, config);
+  }
+  async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return request.get(url, config);
+  }
+  async request<T>(config: AxiosRequestConfig): Promise<T> {
+    return request(config);
+  }
+}
+
+export const http = new Http();
