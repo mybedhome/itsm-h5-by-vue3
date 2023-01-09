@@ -23,6 +23,7 @@
               v-model="pickerSelected"
               @confirm="onConfirm"
               @cancel="showPicker = false"
+              v-if="showPicker"
             />
           </van-popup>
           <van-calendar
