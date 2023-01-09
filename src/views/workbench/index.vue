@@ -25,25 +25,21 @@
           <span>筛选条件：</span>
           <span><van-icon name="close" size="18px" /></span>
         </li>
+        <li v-for="(item, index) in filterData" :key="index">
+          <span>{{ item.label }}: </span>
+          <span>{{ item.name }}</span>
+        </li>
         <!-- <li>
-          <span>服务: </span>
-          <span>测试的服务</span>
-        </li>
-        <li>
-          <span>状态: </span>
-          <span>测试的服务</span>
-        </li>
-        <li>
-          <span>发起人: </span>
-          <span>测试的服务</span>
-        </li> -->
-        <li>
           <span>发起时间: </span>
           <span>2022-10-23到2023-01-06</span>
-        </li>
+        </li> -->
       </ul>
       <OrderList />
-      <OrderFilter v-model:show="isShowOrderFilter" :columns="columns" />
+      <OrderFilter
+        v-model:show="isShowOrderFilter"
+        :columns="columns"
+        @confirm="onConfirm"
+      />
     </section>
     <!-- <TheTabbar /> -->
   </div>
@@ -52,7 +48,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import OrderList from '../components/OrderList.vue';
-import OrderFilter from '../components/OrderFilter.vue';
+import OrderFilter, {
+  type OrderFilterConfirmEventParams,
+} from '../components/OrderFilter.vue';
 import createIcon from '@/assets/create.svg';
 import todoIcon from '@/assets/todo.svg';
 import draftIcon from '@/assets/draft.svg';
@@ -75,6 +73,8 @@ const menus = ref([
   },
 ]);
 
+const filterData = ref<OrderFilterConfirmEventParams>([]);
+
 const { columns } = useOrderFilter();
 
 const onFocus = () => {
@@ -84,6 +84,12 @@ const onFocus = () => {
 const isShowOrderFilter = ref(false);
 const handleAction = (action: string) => {
   isShowOrderFilter.value = action === '筛选' ? true : false;
+};
+
+const onConfirm = (selected: OrderFilterConfirmEventParams) => {
+  isShowOrderFilter.value = false;
+  console.log('selected order', selected);
+  filterData.value = selected;
 };
 </script>
 

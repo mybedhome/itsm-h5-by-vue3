@@ -46,24 +46,31 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import type { PickerConfirmEventParams } from 'vant';
-import { OrderFilterKey, type Column } from '@/types/common';
-import dayjs from 'dayjs';
+<script lang="ts">
 type SelectFilterItemValue = string | Date[] | number[];
 type SelectFilterItem = {
   label: string;
   name: string;
   value: SelectFilterItemValue;
 };
+export type OrderFilterConfirmEventParams = SelectFilterItem[];
+</script>
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue';
+import type { PickerConfirmEventParams } from 'vant';
+import { OrderFilterKey, type Column } from '@/types/common';
+import dayjs from 'dayjs';
 
 const props = defineProps<{
   show: boolean;
   columns: Column[];
 }>();
 
-const emit = defineEmits(['update:show']);
+const emit = defineEmits<{
+  (e: 'update:show', value: boolean): void;
+  (e: 'confirm', value: OrderFilterConfirmEventParams): void;
+}>();
+
 const isShow = computed({
   get() {
     return props.show;
@@ -103,7 +110,7 @@ const activeKey = ref<modelKey>('' as modelKey);
 const activeLabel = ref('');
 
 // 确认选中的过滤条件
-const selected = ref<SelectFilterItem[]>([]);
+const selected = ref<OrderFilterConfirmEventParams>([]);
 
 const customFieldName = computed(() => {
   switch (activeKey.value) {
@@ -172,7 +179,6 @@ const onConfirm = (params: PickerConfirmEventParams) => {
   } else {
     selected.value.splice(index, 1, item);
   }
-
   showPicker.value = false;
 };
 
@@ -206,7 +212,7 @@ const resetForm = () => {
 };
 
 const submitForm = () => {
-  isShow.value = false;
+  emit('confirm', selected.value);
 };
 </script>
 
