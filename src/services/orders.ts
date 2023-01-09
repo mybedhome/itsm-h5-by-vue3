@@ -8,3 +8,7 @@ export const getOrders = (id: number) => {
 export const getEngineUsers = () => {
   return http.get<GetEngineUsersData>('/orders/engineUsers');
 };
+
+export const getTotoItemTotal = () => {
+  return http.get<number>('/orders/_countNoHandleOrderNum');
+};

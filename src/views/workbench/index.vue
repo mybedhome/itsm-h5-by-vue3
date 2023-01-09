@@ -20,22 +20,21 @@
           />
         </van-grid>
       </div>
-      <ul class="filter-block">
+      <ul class="filter-block" v-if="hasFilterParams">
         <li class="filter-header">
           <span>筛选条件：</span>
-          <span><van-icon name="close" size="18px" /></span>
+          <span
+            ><van-icon name="close" size="18px" @click="handleFilterClear"
+          /></span>
         </li>
-        <li v-for="(item, index) in filterData" :key="index">
+        <li v-for="(item, index) in filterResult" :key="index">
           <span>{{ item.label }}: </span>
           <span>{{ item.name }}</span>
         </li>
-        <!-- <li>
-          <span>发起时间: </span>
-          <span>2022-10-23到2023-01-06</span>
-        </li> -->
       </ul>
       <OrderList />
       <OrderFilter
+        ref="orderFilterRef"
         v-model:show="isShowOrderFilter"
         :columns="columns"
         @confirm="onConfirm"
@@ -45,8 +44,13 @@
   </div>
 </template>
 
+<script lang="ts">
+export default { name: 'WorkbenchView' };
+type OrderFilterInstance = typeof OrderFilter;
+</script>
+
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import OrderList from '../components/OrderList.vue';
 import OrderFilter, {
   type OrderFilterConfirmEventParams,
@@ -73,9 +77,17 @@ const menus = ref([
   },
 ]);
 
-const filterData = ref<OrderFilterConfirmEventParams>([]);
+const orderFilterRef = ref<OrderFilterInstance>(
+  null as unknown as OrderFilterInstance
+);
+const handleFilterClear = () => {
+  orderFilterRef.value?.resetForm();
+  filterResult.value = [];
+};
 
-const { columns } = useOrderFilter();
+const { columns, filterResult, condition } = useOrderFilter();
+
+const hasFilterParams = computed(() => filterResult.value.length > 0);
 
 const onFocus = () => {
   console.log('focus2');
@@ -89,12 +101,8 @@ const handleAction = (action: string) => {
 const onConfirm = (selected: OrderFilterConfirmEventParams) => {
   isShowOrderFilter.value = false;
   console.log('selected order', selected);
-  filterData.value = selected;
+  filterResult.value = selected;
 };
-</script>
-
-<script lang="ts">
-export default { name: 'WorkbenchView' };
 </script>
 
 <style scoped lang="scss">

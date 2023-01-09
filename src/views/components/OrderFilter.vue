@@ -10,7 +10,7 @@
               is-link
               readonly
               :placeholder="`点击选择${col.label}`"
-              :right-icon="model[col.key as OrderFilterKey] && col.key != OrderFilterKey.CREATE_TIME ? 'close' : ''"
+              :right-icon="model[col.key as OrderFilterKey] ? 'close' : ''"
               @click="onFieldClick(col.key, col.data, col.label)"
               @click-right-icon.stop="onFieldClear(col.key, col.label)"
             />
@@ -51,7 +51,7 @@ type SelectFilterItemValue = string | Date[] | number[];
 type SelectFilterItem = {
   label: string;
   name: string;
-  value: SelectFilterItemValue;
+  value: any;
 };
 export type OrderFilterConfirmEventParams = SelectFilterItem[];
 </script>
@@ -80,7 +80,7 @@ const isShow = computed({
   },
 });
 
-const createTimeColumn = computed(() =>
+const timeColumn = computed(() =>
   props.columns.find((col) => col.key === OrderFilterKey.CREATE_TIME)
 );
 
@@ -92,6 +92,7 @@ const defaultDate = ref(initDefaultDate());
 const minDate = dayjs().subtract(2, 'year').toDate();
 
 const formatDate = ([start, end]: Date[]) => {
+  if (!start || !end) return '';
   const mode = 'YYYY/MM/DD';
   return `${dayjs(start).format(mode)} - ${dayjs(end).format(mode)}`;
 };
@@ -110,7 +111,13 @@ const activeKey = ref<modelKey>('' as modelKey);
 const activeLabel = ref('');
 
 // 确认选中的过滤条件
-const selected = ref<OrderFilterConfirmEventParams>([]);
+const selected = ref<OrderFilterConfirmEventParams>([
+  {
+    label: timeColumn.value?.label as string,
+    name: model.value.createTime,
+    value: [defaultDate.value[0].getTime(), defaultDate.value[1].getTime()],
+  },
+]);
 
 const customFieldName = computed(() => {
   switch (activeKey.value) {
@@ -200,20 +207,17 @@ const onConfirmDate = ([start, end]: Date[]) => {
 
 const resetForm = () => {
   model.value = { ...initModelValue };
+  model.value.createTime = '';
   pickerSelected.value = [];
-  defaultDate.value = initDefaultDate();
-  selected.value = [
-    {
-      name: model.value.createTime,
-      label: createTimeColumn.value?.label as string,
-      value: [defaultDate.value[0].getTime(), defaultDate.value[1].getTime()],
-    },
-  ];
+  defaultDate.value = [];
+  selected.value = [];
 };
 
 const submitForm = () => {
   emit('confirm', selected.value);
 };
+
+defineExpose<Record<string, typeof resetForm>>({ resetForm });
 </script>
 
 <style scoped lang="scss">
