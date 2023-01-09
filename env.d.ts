@@ -7,3 +7,5 @@ declare module '*.vue' {
 
   export default vueComponent;
 }
+
+declare module 'dayjs';

@@ -7,4 +7,5 @@ export const themeVars: ConfigProviderThemeVars = {
   searchBackground: 'transparent',
   buttonPrimaryBackground: '#4b6eef',
   buttonPrimaryBorderColor: '#4b6eef',
+  actionSheetMaxHeight: '90%',
 };

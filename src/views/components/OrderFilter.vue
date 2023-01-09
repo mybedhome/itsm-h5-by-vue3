@@ -15,47 +15,12 @@
               @click-right-icon.stop="onFieldClear(col.key, col.label)"
             />
           </div>
-          <!-- <div class="form-item">
-            <div class="label">状态</div>
-            <van-field
-              v-model="status"
-              is-link
-              readonly
-              placeholder="点击选择状态"
-              :right-icon="status ? 'close' : ''"
-              @click="onFieldClick('status')"
-              @click-right-icon.stop="status = 0"
-            />
-          </div>
-          <div class="form-item">
-            <div class="label">发起人</div>
-            <van-field
-              v-model="creator"
-              is-link
-              readonly
-              placeholder="点击选择发起人"
-              :right-icon="creator ? 'close' : ''"
-              @click="onFieldClick('creator')"
-              @click-right-icon.stop="creator = ''"
-            />
-          </div>
-          <div class="form-item">
-            <div class="label">发起时间</div>
-            <van-field
-              v-model="createTime"
-              is-link
-              readonly
-              placeholder="点击选择发起时间"
-              :right-icon="createTime ? 'close' : ''"
-              @click="onFieldClick('createTime')"
-              @click-right-icon.stop="handleClearField"
-            />
-          </div> -->
           <van-popup v-model:show="showPicker" position="bottom">
             <van-picker
-              :columns="pickerData"
+              :columns="pickerColumns"
               :columns-field-names="customFieldName"
               :title="activeLabel"
+              v-model="pickerSelected"
               @confirm="onConfirm"
               @cancel="showPicker = false"
             />
@@ -65,24 +30,31 @@
             @confirm="onConfirmDate"
             :default-date="defaultDate"
             :min-date="minDate"
+            title="选择时间"
             type="range"
           />
         </van-form>
+        <div class="footer-button">
+          <van-button @click="resetForm" class="action-button">重置</van-button>
+          <van-button @click="submitForm" type="primary" class="action-button"
+            >确定</van-button
+          >
+        </div>
       </div>
     </van-action-sheet>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import type { PickerConfirmEventParams, PickerOption } from 'vant';
+import { ref, computed, watch } from 'vue';
+import type { PickerConfirmEventParams } from 'vant';
 import { OrderFilterKey, type Column } from '@/types/common';
-import { utils } from '@/utils';
 import dayjs from 'dayjs';
+type SelectFilterItemValue = string | Date[] | number[];
 type SelectFilterItem = {
   label: string;
   name: string;
-  value: string | Date[];
+  value: SelectFilterItemValue;
 };
 
 const props = defineProps<{
@@ -100,18 +72,29 @@ const isShow = computed({
   },
 });
 
-const service = ref('');
-const status = ref('');
-const creator = ref('');
-const createTime = ref('');
-const defaultDate = ref([dayjs().subtract(1, 'month').toDate(), new Date()]);
+const createTimeColumn = computed(() =>
+  props.columns.find((col) => col.key === OrderFilterKey.CREATE_TIME)
+);
+
+const initDefaultDate = () => [
+  dayjs().subtract(1, 'month').toDate(),
+  new Date(),
+];
+const defaultDate = ref(initDefaultDate());
 const minDate = dayjs().subtract(2, 'year').toDate();
-const model = ref({
+
+const formatDate = ([start, end]: Date[]) => {
+  const mode = 'YYYY/MM/DD';
+  return `${dayjs(start).format(mode)} - ${dayjs(end).format(mode)}`;
+};
+
+const initModelValue = {
   service: '',
   status: '',
   creator: '',
-  createTime: '',
-});
+  createTime: formatDate(defaultDate.value),
+};
+const model = ref({ ...initModelValue });
 
 type modelKey = keyof typeof model.value;
 
@@ -131,10 +114,21 @@ const customFieldName = computed(() => {
       return { text: 'text', value: 'value' };
   }
 });
-const pickerData = ref([]);
 
+const pickerColumns = ref([]);
+const pickerSelected = ref<any[]>([]);
 const showCalendar = ref(false);
 const showPicker = ref(false);
+
+watch(activeLabel, () => {
+  const activeItem = selected.value.find(
+    (item) => item.label === activeLabel.value
+  );
+
+  if (activeItem) {
+    pickerSelected.value[0] = activeItem.value;
+  }
+});
 
 const onFieldClick = (field: modelKey, data: any, label: string) => {
   activeKey.value = field;
@@ -142,9 +136,16 @@ const onFieldClick = (field: modelKey, data: any, label: string) => {
   if (field === OrderFilterKey.CREATE_TIME) {
     showCalendar.value = true;
   } else {
-    pickerData.value = data;
+    pickerColumns.value = data;
     showPicker.value = true;
   }
+};
+
+const onFieldClear = (key: modelKey, label: string) => {
+  model.value[key] = '';
+  pickerSelected.value = [];
+  const index = findIndex(label);
+  selected.value.splice(index, 1);
 };
 
 const findIndex = (label: string) => {
@@ -174,15 +175,12 @@ const onConfirm = (params: PickerConfirmEventParams) => {
   showPicker.value = false;
 };
 
-const onConfirmDate = ([beigin, end]: Date[]) => {
-  const mode = 'YYYY/MM/DD';
-  model.value.createTime = `${dayjs(beigin).format(mode)} - ${dayjs(end).format(
-    mode
-  )}`;
+const onConfirmDate = ([start, end]: Date[]) => {
+  model.value.createTime = formatDate([start, end]);
   const index = findIndex(activeLabel.value);
   const item = {
     name: model.value.createTime,
-    value: [beigin.getTime(), end.getTime()],
+    value: [start.getTime(), end.getTime()],
     label: activeLabel.value,
   };
   if (index === -1) {
@@ -193,16 +191,29 @@ const onConfirmDate = ([beigin, end]: Date[]) => {
   showCalendar.value = false;
 };
 
-const onFieldClear = (key: modelKey, label: string) => {
-  model.value[key] = '';
-  const index = findIndex(label);
-  selected.value.splice(index, 1);
+const resetForm = () => {
+  model.value = { ...initModelValue };
+  pickerSelected.value = [];
+  defaultDate.value = initDefaultDate();
+  selected.value = [
+    {
+      name: model.value.createTime,
+      label: createTimeColumn.value?.label as string,
+      value: [defaultDate.value[0].getTime(), defaultDate.value[1].getTime()],
+    },
+  ];
+};
+
+const submitForm = () => {
+  isShow.value = false;
 };
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/variables.scss';
 .content {
-  min-height: 450px;
+  position: relative;
+  min-height: calc(90vh - var(--van-action-sheet-header-height));
 }
 .form-item {
   &::after {
@@ -220,5 +231,22 @@ const onFieldClear = (key: modelKey, label: string) => {
 .label {
   padding-left: var(--van-cell-horizontal-padding);
   padding-top: var(--van-cell-vertical-padding);
+}
+.footer-button {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 11px;
+  border-top: 1px solid var(--van-cell-border-color);
+  .action-button {
+    flex: 1;
+    margin: 0 6px;
+  }
+  .action-button:first-child {
+    color: $secondaryTextColor;
+  }
 }
 </style>
