@@ -1,5 +1,5 @@
 import { RouteName } from '@/router';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, shallowRef } from 'vue';
 import { getServices } from '@/services/service';
 import { getEngineUsers } from '@/services/orders';
 import { OrderFilterKey, type Column } from '@/types/common';
@@ -62,7 +62,7 @@ function useOrderFilter() {
     };
   });
 
-  const condition = ref<OrderQueryCondition>({
+  const condition = shallowRef<OrderQueryCondition>({
     isAccSystem: 1,
     flag: true,
     serialNum: '',

@@ -13,7 +13,7 @@
         v-model:loading="loading"
         :finished="finished"
         :immediate-check="false"
-        :offset="50"
+        offset="50"
         @load="fetchData"
         finished-text="没有更多了"
       >
@@ -58,15 +58,13 @@ export default { name: 'WorkbenchView' };
 </script>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watchEffect } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import OrderList from '../components/OrderList.vue';
 import OrderFilter from '../components/OrderFilter.vue';
 import createIcon from '@/assets/create.svg';
 import todoIcon from '@/assets/todo.svg';
 import draftIcon from '@/assets/draft.svg';
-import { getOrders } from '@/services/orders';
 import { useOrderFilter } from '@/composables/useOrderFilter';
-import type { OrderListData } from '@/services/model/orderModel';
 import type { OrderFilterConfirmEventParams } from '../components/OrderFilter';
 import { useDebouncedRef } from '@/composables/useDebouncedRef';
 import { useOrderListLoad } from '@/composables/useOrderListLoad';
@@ -89,10 +87,10 @@ const menus = ref([
 ]);
 
 const { columns, filterResult, condition } = useOrderFilter();
-const { loading, finished, data, fetchData } = useOrderListLoad();
+const { loading, finished, data, fetchData } = useOrderListLoad(condition);
 
-watchEffect(() => {
-  fetchData(condition);
+onMounted(() => {
+  fetchData();
 });
 
 const orderFilterRef = ref<OrderFilterInstance>(

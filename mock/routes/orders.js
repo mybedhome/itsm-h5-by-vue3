@@ -32,7 +32,7 @@ const createOrderData = () => {
 const orderData = createOrderData();
 
 const getCurrentPageData = (pageNo, pageSize) => {
-  const offset = pageNo - 1;
+  const offset = (pageNo - 1) * pageSize;
   const endPos = pageNo * pageSize;
   return orderData.slice(offset, endPos);
 };
@@ -48,7 +48,7 @@ router.post('/_query', async (req, res) => {
       maxPage: getMaxPage(req.body.pageSize),
     },
   };
-  await util.delay(3000);
+  await util.delay(100);
   // res.status(500);
   res.json(data);
 });
