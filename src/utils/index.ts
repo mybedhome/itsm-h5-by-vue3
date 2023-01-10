@@ -29,10 +29,15 @@ const isSet = isWhatType('Set');
 const isWeakSet = isWhatType('WeakSet');
 const isPromise = isWhatType('Promise');
 
+const isEmptyArray = (arg: any) => !arg || !isArray(arg) || arg.length === 0;
 const isValidArray = (arg: any) => isArray(arg) && arg.length > 0;
 
 const isPlainObject = (arg: { constructor?: Function }): boolean =>
   !isNil(arg) && arg.constructor === Object;
+
+const isEmptyPlainObject = (arg: any) => {
+  return !isPlainObject(arg) || Object.keys(arg).length === 0;
+};
 
 // 解析json字符串为json对象
 const parseJSONString = (arg: string, failResult = {}) => {
@@ -134,8 +139,10 @@ export const utils = {
   isSet,
   isWeakSet,
   isPromise,
+  isEmptyArray,
   isValidArray,
   isPlainObject,
+  isEmptyPlainObject,
   parseJSONString,
   formDataToObject,
   delay,

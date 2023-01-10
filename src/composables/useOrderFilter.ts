@@ -48,21 +48,17 @@ function useOrderFilter() {
     );
   });
 
-  watch(
-    filterResult,
-    () => {
-      condition.value = {
-        ...condition.value,
-        ...{
-          serviceId: serviceFilterResult.value?.value,
-          orderStatus: orderStatusFilterResult.value?.value,
-          createUserId: creatorFilterResult.value?.value,
-          createTimeRange: timeFilterResult.value?.value,
-        },
-      };
-    },
-    { deep: true }
-  );
+  watch(filterResult, () => {
+    condition.value = {
+      ...condition.value,
+      ...{
+        serviceId: serviceFilterResult.value?.value,
+        orderStatus: orderStatusFilterResult.value?.value,
+        createUserId: creatorFilterResult.value?.value,
+        createTimeRange: timeFilterResult.value?.value || [],
+      },
+    };
+  });
 
   const condition = ref({
     isAccSystem: 1,

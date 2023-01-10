@@ -1,6 +1,10 @@
 <template>
   <div>
-    <van-action-sheet v-model:show="isShow" title="筛选">
+    <van-action-sheet
+      v-model:show="isShow"
+      title="筛选"
+      @open="onActionSheetOpen"
+    >
       <div class="content">
         <van-form>
           <div class="form-item" v-for="col in columns" :key="col.key">
@@ -56,11 +60,11 @@ type SelectFilterItem = {
 export type OrderFilterConfirmEventParams = SelectFilterItem[];
 </script>
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, shallowRef, computed, watch } from 'vue';
 import type { PickerConfirmEventParams } from 'vant';
 import { OrderFilterKey, type Column } from '@/types/common';
 import dayjs from 'dayjs';
-
+import { utils } from '@/utils';
 const props = defineProps<{
   show: boolean;
   columns: Column[];
@@ -106,18 +110,40 @@ const initModelValue = {
 const model = ref({ ...initModelValue });
 
 type modelKey = keyof typeof model.value;
+type IModel = Record<modelKey, string>;
 
 const activeKey = ref<modelKey>('' as modelKey);
 const activeLabel = ref('');
 
 // 确认选中的过滤条件
-const selected = ref<OrderFilterConfirmEventParams>([
+const selected = shallowRef<OrderFilterConfirmEventParams>([
   {
     label: timeColumn.value?.label as string,
     name: model.value.createTime,
     value: [defaultDate.value[0].getTime(), defaultDate.value[1].getTime()],
   },
 ]);
+
+// 最后一次确认选中的状态
+let lastSaveSelected: OrderFilterConfirmEventParams = [];
+let lastSaveModel = {} as IModel;
+
+// 弹窗显示后从最后一次保存状态中恢复数据
+const onActionSheetOpen = () => {
+  restoreState();
+};
+
+const restoreState = () => {
+  if (!utils.isEmptyPlainObject(lastSaveModel)) {
+    model.value = { ...lastSaveModel };
+    selected.value = [...lastSaveSelected];
+  }
+};
+
+const resetLastSaveState = () => {
+  lastSaveSelected = [] as OrderFilterConfirmEventParams;
+  lastSaveModel = {} as IModel;
+};
 
 const customFieldName = computed(() => {
   switch (activeKey.value) {
@@ -214,10 +240,16 @@ const resetForm = () => {
 };
 
 const submitForm = () => {
-  emit('confirm', selected.value);
+  lastSaveSelected = [...selected.value];
+  lastSaveModel = { ...model.value };
+  emit('confirm', lastSaveSelected);
 };
 
-defineExpose<Record<string, typeof resetForm>>({ resetForm });
+const clearState = () => {
+  resetForm();
+  resetLastSaveState();
+};
+defineExpose<Record<string, typeof clearState>>({ clearState });
 </script>
 
 <style scoped lang="scss">

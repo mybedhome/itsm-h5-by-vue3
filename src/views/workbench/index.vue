@@ -81,7 +81,7 @@ const orderFilterRef = ref<OrderFilterInstance>(
   null as unknown as OrderFilterInstance
 );
 const handleFilterClear = () => {
-  orderFilterRef.value?.resetForm();
+  orderFilterRef.value?.clearState();
   filterResult.value = [];
 };
 
@@ -100,7 +100,6 @@ const handleAction = (action: string) => {
 
 const onConfirm = (selected: OrderFilterConfirmEventParams) => {
   isShowOrderFilter.value = false;
-  console.log('selected order', selected);
   filterResult.value = selected;
 };
 </script>
