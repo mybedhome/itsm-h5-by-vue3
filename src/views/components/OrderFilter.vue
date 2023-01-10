@@ -50,21 +50,13 @@
   </div>
 </template>
 
-<script lang="ts">
-type SelectFilterItemValue = string | Date[] | number[];
-type SelectFilterItem = {
-  label: string;
-  name: string;
-  value: any;
-};
-export type OrderFilterConfirmEventParams = SelectFilterItem[];
-</script>
 <script setup lang="ts">
 import { ref, shallowRef, computed, watch } from 'vue';
 import type { PickerConfirmEventParams } from 'vant';
 import { OrderFilterKey, type Column } from '@/types/common';
 import dayjs from 'dayjs';
 import { utils } from '@/utils';
+import type { OrderFilterConfirmEventParams } from './OrderFilter';
 const props = defineProps<{
   show: boolean;
   columns: Column[];

@@ -18,6 +18,8 @@ import {
   Form,
   Field,
   Picker,
+  List,
+  Cell,
 } from 'vant';
 import './assets/base.css';
 import 'vant/lib/index.css';
@@ -41,6 +43,8 @@ app
   .use(Tabbar)
   .use(TabbarItem)
   .use(Search)
+  .use(List)
+  .use(Cell)
   .use(Grid)
   .use(GridItem);
 

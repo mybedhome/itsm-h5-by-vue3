@@ -9,30 +9,39 @@
       />
     </section>
     <section class="content-section">
-      <div class="menu-block">
-        <van-grid :border="false" :icon-size="67">
-          <van-grid-item
-            v-for="{ icon, text } in menus"
-            :key="text"
-            :icon="icon"
-            :text="text"
-            icon-prefix="workbench-menu-icon"
-          />
-        </van-grid>
-      </div>
-      <ul class="filter-block" v-if="hasFilterParams">
-        <li class="filter-header">
-          <span>筛选条件：</span>
-          <span
-            ><van-icon name="close" size="18px" @click="handleFilterClear"
-          /></span>
-        </li>
-        <li v-for="(item, index) in filterResult" :key="index">
-          <span>{{ item.label }}: </span>
-          <span>{{ item.name }}</span>
-        </li>
-      </ul>
-      <OrderList />
+      <van-list
+        v-model:loading="loading"
+        :finished="finished"
+        :immediate-check="false"
+        :offset="50"
+        @load="fetchData"
+        finished-text="没有更多了"
+      >
+        <div class="menu-block">
+          <van-grid :border="false" :icon-size="67">
+            <van-grid-item
+              v-for="{ icon, text } in menus"
+              :key="text"
+              :icon="icon"
+              :text="text"
+              icon-prefix="workbench-menu-icon"
+            />
+          </van-grid>
+        </div>
+        <ul class="filter-block" v-if="hasFilterParams">
+          <li class="filter-header">
+            <span>筛选条件：</span>
+            <span
+              ><van-icon name="close" size="18px" @click="handleFilterClear"
+            /></span>
+          </li>
+          <li v-for="(item, index) in filterResult" :key="index">
+            <span>{{ item.label }}: </span>
+            <span>{{ item.name }}</span>
+          </li>
+        </ul>
+        <OrderList :data="data" />
+      </van-list>
       <OrderFilter
         ref="orderFilterRef"
         v-model:show="isShowOrderFilter"
@@ -46,22 +55,24 @@
 
 <script lang="ts">
 export default { name: 'WorkbenchView' };
-type OrderFilterInstance = typeof OrderFilter;
 </script>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watchEffect } from 'vue';
 import OrderList from '../components/OrderList.vue';
-import OrderFilter, {
-  type OrderFilterConfirmEventParams,
-} from '../components/OrderFilter.vue';
+import OrderFilter from '../components/OrderFilter.vue';
 import createIcon from '@/assets/create.svg';
 import todoIcon from '@/assets/todo.svg';
 import draftIcon from '@/assets/draft.svg';
 import { getOrders } from '@/services/orders';
 import { useOrderFilter } from '@/composables/useOrderFilter';
+import type { OrderListData } from '@/services/model/orderModel';
+import type { OrderFilterConfirmEventParams } from '../components/OrderFilter';
+import { useDebouncedRef } from '@/composables/useDebouncedRef';
+import { useOrderListLoad } from '@/composables/useOrderListLoad';
+type OrderFilterInstance = typeof OrderFilter;
 
-const searchText = ref('');
+const searchText = useDebouncedRef('', 500);
 const menus = ref([
   {
     icon: createIcon,
@@ -77,6 +88,13 @@ const menus = ref([
   },
 ]);
 
+const { columns, filterResult, condition } = useOrderFilter();
+const { loading, finished, data, fetchData } = useOrderListLoad();
+
+watchEffect(() => {
+  fetchData(condition);
+});
+
 const orderFilterRef = ref<OrderFilterInstance>(
   null as unknown as OrderFilterInstance
 );
@@ -84,8 +102,6 @@ const handleFilterClear = () => {
   orderFilterRef.value?.clearState();
   filterResult.value = [];
 };
-
-const { columns, filterResult, condition } = useOrderFilter();
 
 const hasFilterParams = computed(() => filterResult.value.length > 0);
 

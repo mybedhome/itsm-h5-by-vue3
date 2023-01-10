@@ -1,8 +1,12 @@
 import { http } from '@/utils/request';
-import type { GetEngineUsersData } from './model/orderModel';
-export const getOrders = (id: number) => {
-  console.log('请求参数', id);
-  return http.get('/orders/_query', { params: { id } });
+import type {
+  GetEngineUsersData,
+  GetOrderQueryParams,
+  GetOrderQueryData,
+} from './model/orderModel';
+
+export const getOrders = (params: GetOrderQueryParams) => {
+  return http.post<GetOrderQueryData>('/orders/_query', params);
 };
 
 export const getEngineUsers = () => {

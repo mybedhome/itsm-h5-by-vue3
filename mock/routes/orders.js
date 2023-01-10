@@ -1,29 +1,54 @@
 var express = require('express');
 var router = express.Router();
 const util = require('../util');
-router.get('/_query', async (req, res) => {
+const { faker } = require('@faker-js/faker');
+faker.locale = 'zh_CN';
+
+const createOrderData = () => {
+  return Array.from({ length: 30 }).map(() => {
+    const order = {
+      id: util.guid(),
+      createTime: Date.now() - parseInt(Math.random() * 100000),
+      flowName: faker.helpers.arrayElement([
+        '告警工单流程',
+        '变更工单流程',
+        '问题工单流程',
+        '事件工单流程',
+        '发布与部署管理流程',
+      ]),
+      flowId: util.guid(),
+      orderTitle: faker.word.adjective({ min: 5, max: 10 }),
+      orderStatus: faker.helpers.arrayElement([1, 2, 3]),
+      serialNum:
+        faker.helpers.arrayElement(['Event', 'Warning', 'Change']) + Date.now(),
+      createUser: {
+        userName: faker.name.firstName(),
+        userId: util.guid(),
+      },
+    };
+    return order;
+  });
+};
+const orderData = createOrderData();
+
+const getCurrentPageData = (pageNo, pageSize) => {
+  const offset = pageNo - 1;
+  const endPos = pageNo * pageSize;
+  return orderData.slice(offset, endPos);
+};
+
+const getMaxPage = (pageSize) => Math.ceil(orderData.length / pageSize);
+// console.log('orderData', orderData);
+router.post('/_query', async (req, res) => {
+  console.log('req', req.body);
   const data = {
     ...res.body,
     data: {
-      items: [
-        {
-          createTime: Date.now() - 100000,
-          createUser: {
-            userName: 'ivan',
-            userId: '11',
-          },
-          flowName: '事件工单流程',
-          flowId: 'adb-xx-faca-13',
-          notifyStatus: '成功',
-          orderTitle: '工单统计测试',
-          orderTask: '一线处理',
-          serialNum: 'Event202210118937',
-        },
-      ],
+      items: getCurrentPageData(req.body.pageNo, req.body.pageSize),
+      maxPage: getMaxPage(req.body.pageSize),
     },
   };
-  const random = util.getRandom(10);
-  await util.delay(6000);
+  await util.delay(3000);
   // res.status(500);
   res.json(data);
 });

@@ -11,6 +11,7 @@ export type ApiErrorResult = {
   message: string;
   name: string;
   data: any;
+  url: string;
 };
 
 export type ApiSuccessResult<T = any> = {
@@ -52,6 +53,7 @@ request.interceptors.response.use(
         message: error.config.signal.reason,
         name: error.name,
         data: null,
+        url: error.config.url,
       });
     }
     if (error.response) {
@@ -61,6 +63,7 @@ request.interceptors.response.use(
         name: error.name,
         message: data?.message || HttpStatusText[code],
         data,
+        url: error.config.url,
       };
 
       if (status === HttpStatusCode.UNAUTHORIZED) {

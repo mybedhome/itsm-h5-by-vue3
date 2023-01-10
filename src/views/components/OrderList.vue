@@ -1,32 +1,42 @@
 <template>
   <ul class="order-block">
-    <li class="order-item" v-for="n in 10" :key="n">
+    <li class="order-item" v-for="order in props.data" :key="order.id">
       <div class="order-avatar">in</div>
       <div class="order-info">
         <div class="order-info-title">
-          <span class="order-info-name">admin提交的告警工单流程</span>
-          <span :class="['order-info-status', getOrderStatusClass(n % 3)]"
-            >已完成</span
+          <span class="order-info-name">{{
+            `${order.createUser.userName}提交的${order.flowName}`
+          }}</span>
+          <span
+            :class="[
+              'order-info-status',
+              getOrderStatusMap(order.orderStatus).className,
+            ]"
+            >{{ getOrderStatusMap(order.orderStatus).text }}</span
           >
         </div>
-        <div class="order-info-date">2020-11-28 17:23:15</div>
-        <div class="order-info-desc">这是工单标题这是工单标题这是</div>
+        <div class="order-info-date">{{ formatDate(order.createTime) }}</div>
+        <div class="order-info-desc">{{ order.orderTitle }}</div>
       </div>
     </li>
   </ul>
 </template>
 
 <script setup lang="ts">
-const getOrderStatusClass = (status: number) => {
+import type { OrderListData } from '@/services/model/orderModel';
+import dayjs from 'dayjs';
+const props = defineProps<{ data: OrderListData }>();
+const getOrderStatusMap = (status: number) => {
   switch (status) {
     case 1:
-      return 'order-info-status-processing';
+      return { text: '处理中', className: 'order-info-status-processing' };
     case 2:
-      return 'order-info-status-finished';
+      return { text: '已完成', className: 'order-info-status-finished' };
     default:
-      return 'order-info-status-revoked';
+      return { text: '已撤销', className: 'order-info-status-revoked' };
   }
 };
+const formatDate = (d: number) => dayjs(d).format('YYYY-MM-DD HH:mm:ss');
 </script>
 
 <style scoped lang="scss">

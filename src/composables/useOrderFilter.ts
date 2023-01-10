@@ -6,6 +6,8 @@ import { OrderFilterKey, type Column } from '@/types/common';
 import dayjs from 'dayjs';
 import { ORDER_STATUS } from '@/constants';
 import { useRoute } from 'vue-router';
+import type { OrderQueryCondition } from '@/services/model/orderModel';
+import type { OrderFilterConfirmEventParams } from '@/views/components/OrderFilter';
 
 function useOrderFilter() {
   const isDraftRoute = useRoute().name === RouteName.ORDERDRAFT;
@@ -23,7 +25,7 @@ function useOrderFilter() {
   const defaultStartDate = dayjs().subtract(1, 'month').toDate();
   const defaultEndDate = new Date();
   // 默认过滤条件
-  const filterResult = ref([
+  const filterResult = ref<OrderFilterConfirmEventParams>([
     {
       label: isDraftRoute ? '保存时间' : '发起时间',
       name: `${dayjs(defaultStartDate).format('YYYY/MM/DD')} - ${dayjs(
@@ -55,20 +57,19 @@ function useOrderFilter() {
         serviceId: serviceFilterResult.value?.value,
         orderStatus: orderStatusFilterResult.value?.value,
         createUserId: creatorFilterResult.value?.value,
-        createTimeRange: timeFilterResult.value?.value || [],
+        createTimeRange: timeFilterResult.value?.value,
       },
     };
   });
 
-  const condition = ref({
+  const condition = ref<OrderQueryCondition>({
     isAccSystem: 1,
     flag: true,
     serialNum: '',
-    serviceId: serviceFilterResult.value?.value,
-    orderStatus: orderStatusFilterResult.value?.value,
-    createUserId: creatorFilterResult.value?.value,
-    createTimeRange: timeFilterResult.value?.value,
-    userId: '',
+    serviceId: '',
+    orderStatus: '',
+    createUserId: '',
+    createTimeRange: [],
   });
 
   const initRequest = async () => {
