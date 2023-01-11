@@ -61,40 +61,29 @@ const renderOrderChart = () => {
     procNum: '处理中',
     revNum: '已撤销',
   };
+  const color = ['#38c082', '#4b6eef', '#ffaa18'];
   const chartData = orderData.value as OrderStatisticsData;
   if (pieRef.value && chartData) {
     pieChart = echarts.init(pieRef.value);
-    console.log('keys', Object.keys(chartData));
     const option = {
       series: [
         {
-          name: 'Access From',
+          name: '工单状态统计',
           type: 'pie',
           radius: ['30%', '70%'],
-          color: ['#38c082', '#4b6eef', '#ffaa18'],
+          color,
           data: Object.keys(chartData).map((v: string) => ({
             value: chartData[v as keyof OrderStatisticsData],
             name: orderMap[v as keyof OrderStatisticsData],
+            label: {
+              formatter: `{${v}|{b} {c} \n({d}%)}`,
+              rich: {
+                finishNum: { color: color[0] },
+                procNum: { color: color[1] },
+                revNum: { color: color[2] },
+              },
+            },
           })),
-          label: {
-            formatter: (params: any) => {
-              const { name, value } = params.data;
-              const total = Object.values(chartData).reduce(
-                (acc: number, v: number) => acc + v,
-                0
-              );
-              return `${name} ${value} \n (${((value / total) * 100).toFixed(
-                2
-              )}%)`;
-            },
-          },
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-            },
-          },
         },
       ],
     };
