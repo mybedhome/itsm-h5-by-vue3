@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const util = require('../util');
 const { faker } = require('@faker-js/faker');
-faker.locale = 'zh_CN';
 const services = require('../data/services');
 const flowName = require('../data/flowName');
 
 const createOrderData = () => {
-  return Array.from({ length: 30 }).map(() => {
+  return Array.from({ length: 30 }).map((item, index) => {
+    const langs = ['zh_CN', 'en'];
+    faker.setLocale(langs[index % 2]);
     const order = {
       id: util.guid(),
       serviceId: faker.helpers.arrayElement(

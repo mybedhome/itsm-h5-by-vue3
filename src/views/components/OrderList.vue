@@ -1,7 +1,9 @@
 <template>
   <ul class="order-block">
     <li class="order-item" v-for="order in props.data" :key="order.id">
-      <div class="order-avatar">in</div>
+      <div class="order-avatar">
+        {{ displayAvatarText(order.createUser.userName) }}
+      </div>
       <div class="order-info">
         <div class="order-info-title">
           <span class="order-info-name">{{
@@ -26,6 +28,7 @@
 import type { OrderListData } from '@/services/model/orderModel';
 import dayjs from 'dayjs';
 const props = defineProps<{ data: OrderListData }>();
+
 const getOrderStatusMap = (status: number) => {
   switch (status) {
     case 1:
@@ -37,6 +40,10 @@ const getOrderStatusMap = (status: number) => {
   }
 };
 const formatDate = (d: number) => dayjs(d).format('YYYY-MM-DD HH:mm:ss');
+
+const displayAvatarText = (name: string) => {
+  return /^\w/.test(name) ? name.slice(0, 1) : name.slice(-2);
+};
 </script>
 
 <style scoped lang="scss">
@@ -49,14 +56,14 @@ const formatDate = (d: number) => dayjs(d).format('YYYY-MM-DD HH:mm:ss');
     background-color: #fff;
 
     .order-avatar {
-      width: 44px;
+      width: 45px;
       height: 44px;
       line-height: 44px;
       text-align: center;
       background-color: #0097ff;
       color: #fff;
       border-radius: 4px;
-      font-size: 17px;
+      font-size: 16.5px;
       font-weight: 500;
       margin-right: 13px;
     }
