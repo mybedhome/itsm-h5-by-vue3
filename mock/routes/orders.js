@@ -1,9 +1,10 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const util = require('../util');
 const { faker } = require('@faker-js/faker');
 faker.locale = 'zh_CN';
 const services = require('../data/services');
+const flowName = require('../data/flowName');
 
 const createOrderData = () => {
   return Array.from({ length: 30 }).map(() => {
@@ -13,13 +14,7 @@ const createOrderData = () => {
         services.map((service) => service.serviceId)
       ),
       createTime: Date.now() - parseInt(Math.random() * 100000),
-      flowName: faker.helpers.arrayElement([
-        '告警工单流程',
-        '变更工单流程',
-        '问题工单流程',
-        '事件工单流程',
-        '发布与部署管理流程',
-      ]),
+      flowName: faker.helpers.arrayElement(flowName),
       flowId: util.guid(),
       orderTitle: faker.word.adjective({ min: 5, max: 10 }),
       orderStatus: faker.helpers.arrayElement([1, 2, 3]),
@@ -36,13 +31,20 @@ const createOrderData = () => {
 const orderData = createOrderData();
 
 const filter = (condition) => {
-  const { orderStatus, serviceId } = condition;
+  const { orderStatus, serviceId, serialNum } = condition;
   let filterData = [...orderData];
   if (orderStatus) {
     filterData = filterData.filter((item) => item.orderStatus == orderStatus);
   }
   if (serviceId) {
     filterData = filterData.filter((item) => item.serviceId == serviceId);
+  }
+  if (serialNum) {
+    filterData = filterData.filter(
+      (item) =>
+        item.orderTitle.includes(serialNum) ||
+        item.serialNum.includes(serialNum)
+    );
   }
   return filterData;
 };
@@ -59,7 +61,6 @@ const getOrderData = ({ pageNo, pageSize, condition }) => {
 
 // 工单列表查询
 router.post('/_query', async (req, res) => {
-  // console.log('req', req.body);
   const { items, maxPage } = getOrderData(req.body);
   const data = {
     ...res.body,
@@ -84,7 +85,7 @@ router.get('/engineUsers', (req, res) => {
 
 // 查询待办任务总数
 router.get('/_countNoHandleOrderNum', (req, res) => {
-  res.json(3);
+  res.json(19);
 });
 
 module.exports = router;

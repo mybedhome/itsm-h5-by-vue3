@@ -48,8 +48,6 @@ export function useOrderListLoad(condition: Ref<OrderQueryCondition>) {
   };
 
   const onLoad = async () => {
-    // const params = { condition: unref(condition), ...pagination };
-    // const { items = [], maxPage } = await getOrders(params);
     const { items = [], maxPage } = await fetchData();
     loading.value = false;
     data.value.push(...items);

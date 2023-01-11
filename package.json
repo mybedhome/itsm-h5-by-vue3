@@ -13,9 +13,11 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@types/echarts": "^4.9.16",
     "@vant/touch-emulator": "^1.4.0",
     "axios": "^1.2.2",
     "dayjs": "^1.11.7",
+    "echarts": "^5.4.1",
     "pinia": "^2.0.28",
     "vant": "^4.0.7",
     "vue": "^3.2.45",

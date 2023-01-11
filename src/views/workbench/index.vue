@@ -51,7 +51,6 @@
         @confirm="onConfirm"
       />
     </section>
-    <!-- <TheTabbar /> -->
   </div>
 </template>
 
