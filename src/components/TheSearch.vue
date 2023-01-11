@@ -8,7 +8,6 @@
       @focus="onFocus"
       @blur="onBlur"
       @clear="onClear"
-      @update:model-value="onChange"
     >
       <template #action>
         <van-button
@@ -24,21 +23,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 const props = defineProps(['modelValue']);
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
   (e: 'action', value: string): void;
 }>();
-const value = ref(props.modelValue);
+const value = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  },
+});
+
 const buttonText = ref('筛选');
 
-const onChange = (value: string) => {
-  emit('update:modelValue', value);
-};
 const onClear = () => console.log('cleard');
 const onFocus = () => {
-  console.log('on focus');
   buttonText.value = '取消';
 };
 

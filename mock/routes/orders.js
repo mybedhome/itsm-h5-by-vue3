@@ -3,11 +3,15 @@ var router = express.Router();
 const util = require('../util');
 const { faker } = require('@faker-js/faker');
 faker.locale = 'zh_CN';
+const services = require('../data/services');
 
 const createOrderData = () => {
   return Array.from({ length: 30 }).map(() => {
     const order = {
       id: util.guid(),
+      serviceId: faker.helpers.arrayElement(
+        services.map((service) => service.serviceId)
+      ),
       createTime: Date.now() - parseInt(Math.random() * 100000),
       flowName: faker.helpers.arrayElement([
         '告警工单流程',
@@ -31,25 +35,40 @@ const createOrderData = () => {
 };
 const orderData = createOrderData();
 
-const getCurrentPageData = (pageNo, pageSize) => {
-  const offset = (pageNo - 1) * pageSize;
-  const endPos = pageNo * pageSize;
-  return orderData.slice(offset, endPos);
+const filter = (condition) => {
+  const { orderStatus, serviceId } = condition;
+  let filterData = [...orderData];
+  if (orderStatus) {
+    filterData = filterData.filter((item) => item.orderStatus == orderStatus);
+  }
+  if (serviceId) {
+    filterData = filterData.filter((item) => item.serviceId == serviceId);
+  }
+  return filterData;
 };
 
-const getMaxPage = (pageSize) => Math.ceil(orderData.length / pageSize);
-// console.log('orderData', orderData);
+const getOrderData = ({ pageNo, pageSize, condition }) => {
+  const offset = (pageNo - 1) * pageSize;
+  const endPos = pageNo * pageSize;
+  const filterData = filter(condition);
+  return {
+    items: filterData.slice(offset, endPos),
+    maxPage: Math.ceil(filterData.length / pageSize),
+  };
+};
+
+// 工单列表查询
 router.post('/_query', async (req, res) => {
-  console.log('req', req.body);
+  // console.log('req', req.body);
+  const { items, maxPage } = getOrderData(req.body);
   const data = {
     ...res.body,
     data: {
-      items: getCurrentPageData(req.body.pageNo, req.body.pageSize),
-      maxPage: getMaxPage(req.body.pageSize),
+      items,
+      maxPage,
     },
   };
   await util.delay(100);
-  // res.status(500);
   res.json(data);
 });
 
@@ -63,6 +82,7 @@ router.get('/engineUsers', (req, res) => {
   });
 });
 
+// 查询待办任务总数
 router.get('/_countNoHandleOrderNum', (req, res) => {
   res.json(3);
 });

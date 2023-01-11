@@ -62,7 +62,7 @@ function useOrderFilter() {
     };
   });
 
-  const condition = shallowRef<OrderQueryCondition>({
+  const condition = ref<OrderQueryCondition>({
     isAccSystem: 1,
     flag: true,
     serialNum: '',

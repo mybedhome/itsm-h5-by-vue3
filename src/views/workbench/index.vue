@@ -8,38 +8,40 @@
         @action="handleAction"
       />
     </section>
-    <section class="content-section">
+    <section class="content-section" v-show="isShowContentSection">
       <van-list
         v-model:loading="loading"
         :finished="finished"
         :immediate-check="false"
         offset="50"
-        @load="fetchData"
+        @load="onLoad"
         finished-text="没有更多了"
       >
-        <div class="menu-block">
-          <van-grid :border="false" :icon-size="67">
-            <van-grid-item
-              v-for="{ icon, text } in menus"
-              :key="text"
-              :icon="icon"
-              :text="text"
-              icon-prefix="workbench-menu-icon"
-            />
-          </van-grid>
+        <div>
+          <div class="menu-block">
+            <van-grid :border="false" :icon-size="67">
+              <van-grid-item
+                v-for="{ icon, text } in menus"
+                :key="text"
+                :icon="icon"
+                :text="text"
+                icon-prefix="workbench-menu-icon"
+              />
+            </van-grid>
+          </div>
+          <ul class="filter-block" v-if="hasFilterParams">
+            <li class="filter-header">
+              <span>筛选条件：</span>
+              <span
+                ><van-icon name="close" size="18px" @click="handleFilterClear"
+              /></span>
+            </li>
+            <li v-for="(item, index) in filterResult" :key="index">
+              <span>{{ item.label }}: </span>
+              <span>{{ item.name }}</span>
+            </li>
+          </ul>
         </div>
-        <ul class="filter-block" v-if="hasFilterParams">
-          <li class="filter-header">
-            <span>筛选条件：</span>
-            <span
-              ><van-icon name="close" size="18px" @click="handleFilterClear"
-            /></span>
-          </li>
-          <li v-for="(item, index) in filterResult" :key="index">
-            <span>{{ item.label }}: </span>
-            <span>{{ item.name }}</span>
-          </li>
-        </ul>
         <OrderList :data="data" />
       </van-list>
       <OrderFilter
@@ -58,7 +60,7 @@ export default { name: 'WorkbenchView' };
 </script>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch } from 'vue';
 import OrderList from '../components/OrderList.vue';
 import OrderFilter from '../components/OrderFilter.vue';
 import createIcon from '@/assets/create.svg';
@@ -69,8 +71,7 @@ import type { OrderFilterConfirmEventParams } from '../components/OrderFilter';
 import { useDebouncedRef } from '@/composables/useDebouncedRef';
 import { useOrderListLoad } from '@/composables/useOrderListLoad';
 type OrderFilterInstance = typeof OrderFilter;
-
-const searchText = useDebouncedRef('', 500);
+type ActionButton = '筛选' | '取消';
 const menus = ref([
   {
     icon: createIcon,
@@ -86,11 +87,21 @@ const menus = ref([
   },
 ]);
 
-const { columns, filterResult, condition } = useOrderFilter();
-const { loading, finished, data, fetchData } = useOrderListLoad(condition);
+const isFocus = ref(false);
+const isShowContentSection = computed(
+  () => !isFocus.value || !!searchText.value
+);
 
-onMounted(() => {
-  fetchData();
+const { columns, filterResult, condition } = useOrderFilter();
+const { loading, finished, data, onLoad, isSearchMode } =
+  useOrderListLoad(condition);
+
+onLoad();
+
+const searchText = useDebouncedRef('', 500);
+
+watch(searchText, () => {
+  condition.value.serialNum = searchText.value;
 });
 
 const orderFilterRef = ref<OrderFilterInstance>(
@@ -104,12 +115,21 @@ const handleFilterClear = () => {
 const hasFilterParams = computed(() => filterResult.value.length > 0);
 
 const onFocus = () => {
-  console.log('focus2');
+  isFocus.value = true;
+  isSearchMode.value = true;
 };
 
 const isShowOrderFilter = ref(false);
-const handleAction = (action: string) => {
-  isShowOrderFilter.value = action === '筛选' ? true : false;
+
+const handleAction = async (action: ActionButton) => {
+  if (action === '筛选') {
+    isShowOrderFilter.value = true;
+  } else {
+    isSearchMode.value = false;
+    searchText.value = '';
+    isShowOrderFilter.value = false;
+    isFocus.value = false;
+  }
 };
 
 const onConfirm = (selected: OrderFilterConfirmEventParams) => {
