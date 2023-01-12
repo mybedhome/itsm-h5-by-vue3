@@ -6,8 +6,8 @@ export type OrderStatisticsData = {
   revNum: number;
 };
 
-export type ServiceStatisticsData = {
+export type ServiceStatisticsData = Array<{
   NAME_: string;
   NUM_: string;
   PROC_DEF_ID_: string;
-};
+}>;

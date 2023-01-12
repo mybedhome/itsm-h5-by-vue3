@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <div class="chart-box">
-      <div class="chart-title">工单统计</div>
-      <div class="date-field">
+    <div>
+      <div class="chart-title">工单状态</div>
+      <div class="date-field" @click="handleShowCalendar('order')">
         <van-field
           v-model="orderStatusDateText"
           :readonly="true"
@@ -13,47 +13,122 @@
         <div ref="pieRef" class="pie-ref"></div>
       </div>
     </div>
+
+    <div class="service-chart">
+      <div class="chart-title">各服务工单数目<span>TOP5</span></div>
+      <div class="date-field" @click="handleShowCalendar('service')">
+        <van-field
+          v-model="servicesDateText"
+          :readonly="true"
+          left-icon="calendar-o"
+        />
+      </div>
+      <div ref="barRef" class="bar-ref"></div>
+    </div>
+    <van-calendar
+      v-model:show="showCalendar"
+      @confirm="onConfirmDate"
+      :default-date="defaultDate"
+      :min-date="minDate"
+      title="选择时间"
+      type="range"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watchEffect } from 'vue';
+import { ref, onMounted, computed, watchEffect, watch, reactive } from 'vue';
 import * as echarts from 'echarts/core';
-import { PieChart } from 'echarts/charts';
+import { PieChart, BarChart } from 'echarts/charts';
+import { GridComponent } from 'echarts/components';
 import { LabelLayout } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import type { ECharts } from 'echarts/core';
-import { getOrderStatistics } from '@/services/statistics';
+import {
+  getOrderStatistics,
+  getServiceStatistics,
+} from '@/services/statistics';
 import dayjs from 'dayjs';
-import type { OrderStatisticsData } from '@/services/model/statisticsModel';
+import type {
+  OrderStatisticsData,
+  ServiceStatisticsData,
+} from '@/services/model/statisticsModel';
 
-echarts.use([PieChart, CanvasRenderer, LabelLayout]);
+echarts.use([PieChart, BarChart, CanvasRenderer, LabelLayout, GridComponent]);
 
-const defaultDate = {
-  startDate: dayjs().subtract(1, 'month').format('YYYY-MM-DD'),
-  endDate: dayjs().format('YYYY-MM-DD'),
+let defaultDate = reactive([
+  dayjs().subtract(1, 'month').toDate(),
+  dayjs().toDate(),
+]);
+const minDate = dayjs().subtract(2, 'year').toDate();
+const showCalendar = ref(false);
+const calendarTarget = ref('');
+const onConfirmDate = (dates: Date[]) => {
+  showCalendar.value = false;
+  if (calendarTarget.value === 'order') {
+    orderSelectedDate.value = dates;
+    fetchOrderData();
+  } else {
+    serviceSelectedDate.value = dates;
+    fetchServiceData();
+  }
 };
-const orderParams = ref({ ...defaultDate });
+
+const handleShowCalendar = (type: string) => {
+  showCalendar.value = true;
+  calendarTarget.value = type;
+};
+
+const orderSelectedDate = ref([...defaultDate]);
+const serviceSelectedDate = ref([...defaultDate]);
+
+const orderParams = computed(() => {
+  const v = orderSelectedDate.value;
+  return {
+    startDate: dayjs(v[0]).format('YYYY-MM-DD'),
+    endDate: dayjs(v[1]).format('YYYY-MM-DD'),
+  };
+});
+
+const serviceParams = computed(() => {
+  const v = serviceSelectedDate.value;
+  return {
+    startDate: dayjs(v[0]).format('YYYY-MM-DD'),
+    endDate: dayjs(v[1]).format('YYYY-MM-DD'),
+  };
+});
 
 const orderStatusDateText = computed(
   () => `${orderParams.value.startDate} 至 ${orderParams.value.endDate}`
 );
 
-const serviceParams = ref({ ...defaultDate });
-
 const servicesDateText = computed(
   () => `${serviceParams.value.startDate} 至 ${serviceParams.value.endDate}`
 );
 
-const pieRef = ref<HTMLDivElement | null>(null);
+watch(calendarTarget, () => {
+  if (calendarTarget.value === 'order') {
+    defaultDate = orderSelectedDate.value;
+  } else {
+    defaultDate = serviceSelectedDate.value;
+  }
+});
 
+const pieRef = ref<HTMLDivElement | null>(null);
+const barRef = ref<HTMLDivElement | null>(null);
 let pieChart: ECharts | null = null;
+let barChart: ECharts | null = null;
 
 const orderData = ref<OrderStatisticsData | null>(null);
-const fetchData = async () => {
+const serviceData = ref<ServiceStatisticsData>();
+const fetchOrderData = async () => {
   orderData.value = (await getOrderStatistics(orderParams.value))[0];
+  renderOrderChart();
 };
-fetchData();
+const fetchServiceData = async () => {
+  serviceData.value = await getServiceStatistics(serviceParams.value);
+  renderServiceChart();
+};
 
 const renderOrderChart = () => {
   const orderMap = {
@@ -63,8 +138,10 @@ const renderOrderChart = () => {
   };
   const color = ['#38c082', '#4b6eef', '#ffaa18'];
   const chartData = orderData.value as OrderStatisticsData;
-  if (pieRef.value && chartData) {
-    pieChart = echarts.init(pieRef.value);
+  if (pieRef.value) {
+    if (!pieChart) {
+      pieChart = echarts.init(pieRef.value);
+    }
     const option = {
       series: [
         {
@@ -91,10 +168,61 @@ const renderOrderChart = () => {
   }
 };
 
+const renderServiceChart = () => {
+  const chartData = serviceData.value as ServiceStatisticsData;
+
+  if (barRef.value) {
+    if (!barChart) {
+      barChart = echarts.init(barRef.value);
+    }
+
+    const option: echarts.EChartsCoreOption = {
+      xAxis: [
+        {
+          type: 'category',
+          data: chartData.map((item) => item.NAME_),
+          axisTick: {
+            alignWithLabel: true,
+          },
+          axisLabel: {
+            interval: 0,
+            rotate: 45,
+            width: 90,
+            overflow: 'truncate',
+          },
+        },
+      ],
+      yAxis: [
+        {
+          type: 'value',
+        },
+      ],
+      grid: [
+        {
+          height: '95%',
+          bottom: '0%',
+          containLabel: true,
+        },
+      ],
+      series: [
+        {
+          type: 'bar',
+          barWidth: '50%',
+          data: chartData.map((item) => item.NUM_),
+        },
+      ],
+    };
+    barChart.setOption(option);
+  }
+};
+
 onMounted(() => {
-  watchEffect(() => {
-    orderData.value && renderOrderChart();
-  });
+  fetchOrderData();
+  fetchServiceData();
+  // watchEffect(() => {
+  //   orderData.value && renderOrderChart();
+  //   serviceData.value && renderServiceChart();
+  // });
 });
 </script>
 <script lang="ts">
@@ -105,6 +233,7 @@ export default { name: 'StatisticsView' };
 .container {
   height: calc(100vh - 50px);
   background-color: #fff;
+  overflow: auto;
   .van-cell {
     padding: 5px 10px;
   }
@@ -127,5 +256,10 @@ export default { name: 'StatisticsView' };
 .pie-ref {
   width: 100%;
   height: 200px;
+}
+.service-chart {
+  .bar-ref {
+    height: 200px;
+  }
 }
 </style>

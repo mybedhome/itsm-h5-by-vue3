@@ -13,7 +13,7 @@ export const getOrderStatistics = (params: StatisticsParams) => {
 };
 
 export const getServiceStatistics = (params: StatisticsParams) => {
-  return http.get<Array<ServiceStatisticsData>>(
+  return http.get<ServiceStatisticsData>(
     '/flowDefinitions/getOrderStatisticsByFlow',
     { params }
   );

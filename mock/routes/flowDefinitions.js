@@ -6,8 +6,8 @@ const flowName = require('../data/flowName');
 faker.locale = 'zh_CN';
 
 const createData = () => {
-  Array.from({ length: 4 }).map(() => ({
-    NAME_: faker.helpers.arrayElement(flowName),
+  return Array.from({ length: 5 }).map((_, index) => ({
+    NAME_: flowName[index],
     NUM_: faker.datatype.number(50),
     PROC_DEF_ID_: util.guid(),
   }));
