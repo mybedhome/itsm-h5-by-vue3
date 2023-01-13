@@ -40,3 +40,26 @@ export interface GetOrderQueryParams {
   pageSize: number;
   condition: OrderQueryCondition;
 }
+
+export interface GetDraftOrderQueryParams {
+  pageNo: number;
+  pageSize: number;
+  startDate: number;
+  endDate: number;
+  serviceId: string;
+  orderTitle: string;
+  serialNum: string;
+  key?: string;
+}
+
+export interface DraftOrderItem {
+  id: string;
+  createTime: number;
+  flowId: string; // 实际显示的是工单流程名称
+  orderTitle: string;
+  serviceId: string;
+  userId: string;
+  formData: string;
+}
+
+export type DraftOrderListData = DraftOrderItem[];

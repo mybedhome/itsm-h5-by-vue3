@@ -29,11 +29,31 @@ const createOrderData = () => {
     return order;
   });
 };
-const orderData = createOrderData();
 
-const filter = (condition) => {
+const createDraftOrderData = () => {
+  return Array.from({ length: 15 }).map((_, index) => {
+    const item = {
+      id: util.guid(),
+      serviceId: faker.helpers.arrayElement(
+        services.map((service) => service.serviceId)
+      ),
+      createTime: Date.now() - parseInt(Math.random() * 100000),
+      flowId: faker.helpers.arrayElement(flowName),
+      orderTitle: faker.word.adjective({ min: 5, max: 10 }),
+      userId: util.guid(),
+      formData: '',
+    };
+    return item;
+  });
+};
+
+const orderData = createOrderData();
+const draftOrderData = createDraftOrderData();
+
+const filter = (condition, isDraft = false) => {
   const { orderStatus, serviceId, serialNum } = condition;
-  let filterData = [...orderData];
+  const baseData = isDraft ? draftOrderData : orderData;
+  let filterData = [...baseData];
   if (orderStatus) {
     filterData = filterData.filter((item) => item.orderStatus == orderStatus);
   }
@@ -50,10 +70,10 @@ const filter = (condition) => {
   return filterData;
 };
 
-const getOrderData = ({ pageNo, pageSize, condition }) => {
+const getOrderData = ({ pageNo, pageSize, condition }, isDraft) => {
   const offset = (pageNo - 1) * pageSize;
   const endPos = pageNo * pageSize;
-  const filterData = filter(condition);
+  const filterData = filter(condition, isDraft);
   return {
     items: filterData.slice(offset, endPos),
     maxPage: Math.ceil(filterData.length / pageSize),
@@ -74,6 +94,7 @@ router.post('/_query', async (req, res) => {
   res.json(data);
 });
 
+// 发起人数据
 router.get('/engineUsers', (req, res) => {
   res.json({
     ...res.body,
@@ -86,7 +107,22 @@ router.get('/engineUsers', (req, res) => {
 
 // 查询待办任务总数
 router.get('/_countNoHandleOrderNum', (req, res) => {
-  res.json(19);
+  res.json({
+    ...res.body,
+    data: orderData.filter((item) => item.orderStatus == 1).length,
+  });
+});
+
+// 查询草稿箱
+router.get('/drafts/query', (req, res) => {
+  const { items, maxPage } = getOrderData(req.body, true);
+  res.json({
+    ...res.body,
+    data: {
+      items,
+      maxPage,
+    },
+  });
 });
 
 module.exports = router;

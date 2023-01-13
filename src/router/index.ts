@@ -53,11 +53,13 @@ const router = createRouter({
               path: 'todo',
               name: RouteName.ORDERTODO,
               component: () => import('@/views/workbench/index.vue'),
+              props: { isTodoRoute: true },
             },
             {
               path: 'draft',
               name: RouteName.ORDERDRAFT,
               component: () => import('@/views/workbench/index.vue'),
+              props: { isDraftRoute: true },
             },
           ],
         },

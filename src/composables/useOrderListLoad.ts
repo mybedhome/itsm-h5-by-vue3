@@ -5,7 +5,10 @@ import type {
 import { getOrders } from '@/services/orders';
 import { ref, unref, type Ref, watch } from 'vue';
 
-export function useOrderListLoad(condition: Ref<OrderQueryCondition>) {
+export function useOrderListLoad(
+  condition: Ref<OrderQueryCondition>,
+  props: any
+) {
   const loading = ref(false);
   const finished = ref(false);
   const data = ref<OrderListData>([]);
@@ -19,7 +22,11 @@ export function useOrderListLoad(condition: Ref<OrderQueryCondition>) {
     condition,
     () => {
       console.log('condition change', condition.value);
-      if (isSearchMode.value && !condition.value.serialNum) {
+      if (
+        isSearchMode.value &&
+        !condition.value.serialNum &&
+        data.value.length > 0
+      ) {
         return;
       }
       pagination.pageNo = 1;

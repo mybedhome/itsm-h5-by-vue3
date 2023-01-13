@@ -3,6 +3,8 @@ import type {
   GetEngineUsersData,
   GetOrderQueryParams,
   GetOrderQueryData,
+  GetDraftOrderQueryParams,
+  DraftOrderListData,
 } from './model/orderModel';
 
 export const getOrders = (params: GetOrderQueryParams) => {
@@ -15,4 +17,8 @@ export const getEngineUsers = () => {
 
 export const getTotoItemTotal = () => {
   return http.get<number>('/orders/_countNoHandleOrderNum');
+};
+
+export const getDraftOrders = (params: GetDraftOrderQueryParams) => {
+  return http.get<DraftOrderListData>('/drafts/query', { params });
 };
