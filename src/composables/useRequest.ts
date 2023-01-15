@@ -40,7 +40,7 @@ function useRequest<T>(
         });
     } else {
       isLoading.value = false;
-      data.value = result as T;
+      data.value = result as unknown as T;
       error.value = null;
     }
   };

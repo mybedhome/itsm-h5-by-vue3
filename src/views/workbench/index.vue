@@ -68,7 +68,7 @@ export default { name: 'WorkbenchView' };
 </script>
 
 <script setup lang="ts">
-import { ref, computed, watch, defineProps } from 'vue';
+import { ref, computed, watch } from 'vue';
 import OrderList from '../components/OrderList.vue';
 import OrderFilter from '../components/OrderFilter.vue';
 import createIcon from '@/assets/create.svg';
