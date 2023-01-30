@@ -1,6 +1,6 @@
 <template>
   <div>
-    <component :is="activeView"></component>
+    <keep-alive><component :is="activeView"></component></keep-alive>
     <van-tabbar v-model="active">
       <van-tabbar-item icon="home-o">工作台</van-tabbar-item>
       <van-tabbar-item icon="chart-trending-o">统计</van-tabbar-item>

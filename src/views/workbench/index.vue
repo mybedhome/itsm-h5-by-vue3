@@ -14,6 +14,7 @@
         'page-content-section': !isWorkbenchRoute,
       }"
       v-show="isShowContentSection"
+      ref="contentRef"
     >
       <van-list
         v-model:loading="loading"
@@ -68,7 +69,7 @@ export default { name: 'WorkbenchView' };
 </script>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onActivated } from 'vue';
 import OrderList from '../components/OrderList.vue';
 import OrderFilter from '../components/OrderFilter.vue';
 import createIcon from '@/assets/create.svg';
@@ -81,6 +82,8 @@ import { useOrderListLoad } from '@/composables/useOrderListLoad';
 import { getTotoItemTotal } from '@/services/orders';
 import { RouteName } from '@/router';
 import { useRouter } from 'vue-router';
+import { throttle } from 'throttle-debounce';
+
 type OrderFilterInstance = typeof OrderFilter;
 type ActionButton = '筛选' | '取消';
 
@@ -174,6 +177,31 @@ const onConfirm = (selected: OrderFilterConfirmEventParams) => {
   isShowOrderFilter.value = false;
   filterResult.value = selected;
 };
+
+/**
+ * 切换底部标签栏记住滚动位置
+ */
+const contentRef = ref<HTMLElement | null>(null);
+onMounted(() => {
+  if (contentRef.value) {
+    contentRef.value.addEventListener('scroll', debounceScroll, {
+      passive: true,
+    });
+  }
+});
+
+onActivated(() => {
+  (contentRef.value as HTMLElement).scrollTop = prevScrollTop.value;
+});
+
+const prevScrollTop = ref(0);
+const debounceScroll = throttle(
+  100,
+  (e: Event) => {
+    prevScrollTop.value = (e.target as HTMLElement).scrollTop;
+  },
+  { noTrailing: true }
+);
 </script>
 
 <style scoped lang="scss">
@@ -186,7 +214,7 @@ const onConfirm = (selected: OrderFilterConfirmEventParams) => {
 }
 .content-section {
   height: calc(100vh - 105px);
-  overflow: auto;
+  overflow-y: auto;
 }
 .page-content-section {
   height: calc(100vh - 55px);

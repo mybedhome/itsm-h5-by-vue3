@@ -63,7 +63,6 @@ const router = createRouter({
             },
           ],
         },
-
         {
           path: 'no-permissions',
           name: RouteName.NOPERMISSIONS,
