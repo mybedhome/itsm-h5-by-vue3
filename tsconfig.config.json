@@ -9,7 +9,6 @@
   "compilerOptions": {
     "composite": true,
     "types": ["node"],
-    "jsx": "preserve",
-    "jsxImportSource": "@antv/f2"
+    "allowJs": true
   }
 }

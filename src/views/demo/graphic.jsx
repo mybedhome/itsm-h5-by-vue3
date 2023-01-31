@@ -1,4 +1,4 @@
-function View(props: { coord: any; year: any }) {
+function View(props) {
   const { coord, year } = props;
   const { left, top, width, height } = coord;
   const x = left + width / 2;

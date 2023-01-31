@@ -1,55 +1,69 @@
-<script lang="tsx">
-import { toRaw } from 'vue';
+<script lang="jsx">
 import Canvas from '@antv/f2-vue';
-import { Chart, Interval, Axis } from '@antv/f2';
-import Grahpic from './graphic';
-
-const data1 = [
-  { genre: 'Sports', sold: 275 },
-  { genre: 'Strategy', sold: 115 },
-  { genre: 'Action', sold: 120 },
-  { genre: 'Shooter', sold: 350 },
-  { genre: 'Other', sold: 150 },
-];
-
-const data2 = [
-  { genre: 'Sports', sold: 275 },
-  { genre: 'Strategy', sold: 115 },
-  { genre: 'Action', sold: 20 },
-  { genre: 'Shooter', sold: 50 },
-  { genre: 'Other', sold: 50 },
-];
-
+import { Chart, Interval, Axis, ScrollBar, Tooltip } from '@antv/f2';
+import EchartDemo from './echart.vue';
 export default {
   name: 'App',
   data() {
     return {
-      year: '2021',
-      chartData: data1,
+      chartData: [],
     };
   },
-  setup() {
-    const chartData = data1;
-    const year = '2021';
-    return () => (
+  mounted() {
+    fetch('https://gw.alipayobjects.com/os/antfincdn/ZpWsTPpY6%26/steps.json')
+      .then((res) => res.json())
+      .then((data) => {
+        this.chartData = data;
+      });
+  },
+  render() {
+    const { chartData } = this;
+    return (
       <div className="container">
-        <Canvas pixelRatio={window.devicePixelRatio}>
-          <Chart data={toRaw(chartData)}>
-            <Grahpic year={year} />
-            <Axis field="genre" />
-            <Axis field="sold" />
-            <Interval x="genre" y="sold" color="genre" />
-          </Chart>
-        </Canvas>
+        <div class="f2">
+          <Canvas pixelRatio={window.devicePixelRatio}>
+            <Chart data={chartData}>
+              <Axis field="date" type="timeCat" tickCount={5} />
+              <Axis field="steps" formatter={this.formatNumber} />
+              <Interval x="date" y="steps" />
+              <ScrollBar mode="x" range={[0.1, 0.3]} />
+              <Tooltip />
+            </Chart>
+          </Canvas>
+        </div>
+        <div class="echart">
+          <EchartDemo data={chartData} />
+        </div>
       </div>
     );
+  },
+  methods: {
+    formatNumber(n) {
+      return String(Math.floor(n * 100) / 100).replace(
+        /\B(?=(\d{3})+(?!\d))/g,
+        ','
+      );
+    },
   },
 };
 </script>
 
-<style>
+<style scoped>
 .container {
-  width: 500px;
-  height: 300px;
+  display: flex;
+  flex-direction: column;
+  /* width: 95%; */
+  min-height: 100vh;
+  /* margin: 0 auto; */
+  background-color: #fff;
+}
+.f2,
+.echart {
+  width: 100%;
+  height: 50vh;
+}
+.f2 {
+  /* margin-bottom: 10px; */
+  border-bottom: 1px solid #eee;
 }
 </style>
