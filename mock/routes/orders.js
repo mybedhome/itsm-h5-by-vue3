@@ -4,6 +4,7 @@ const util = require('../util');
 const { faker } = require('@faker-js/faker');
 const services = require('../data/services');
 const flowName = require('../data/flowName');
+const dayjs = require('dayjs');
 
 const createOrderData = () => {
   return Array.from({ length: 30 }).map((item, index) => {
@@ -123,6 +124,18 @@ router.get('/drafts/query', (req, res) => {
       maxPage,
     },
   });
+});
+
+router.get('/steps', (req, res) => {
+  let start = '2017-10-31';
+  const data = Array.from({ length: 20000 }).map((item) => {
+    start = dayjs(start).add(1, 'day').format('YYYY-MM-DD');
+    return {
+      date: start,
+      steps: Math.round(Math.random() * 10000),
+    };
+  });
+  res.json(data);
 });
 
 module.exports = router;

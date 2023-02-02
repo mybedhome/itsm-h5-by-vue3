@@ -2,6 +2,7 @@
 import Canvas from '@antv/f2-vue';
 import { Chart, Interval, Axis, ScrollBar, Tooltip } from '@antv/f2';
 import EchartDemo from './echart.vue';
+import { toRaw } from 'vue';
 export default {
   name: 'App',
   data() {
@@ -10,7 +11,7 @@ export default {
     };
   },
   mounted() {
-    fetch('https://gw.alipayobjects.com/os/antfincdn/ZpWsTPpY6%26/steps.json')
+    fetch('/api/orders/steps')
       .then((res) => res.json())
       .then((data) => {
         this.chartData = data;
@@ -19,10 +20,10 @@ export default {
   render() {
     const { chartData } = this;
     return (
-      <div className="container">
+      <div class="container">
         <div class="f2">
           <Canvas pixelRatio={window.devicePixelRatio}>
-            <Chart data={chartData}>
+            <Chart data={toRaw(chartData)}>
               <Axis field="date" type="timeCat" tickCount={5} />
               <Axis field="steps" formatter={this.formatNumber} />
               <Interval x="date" y="steps" />
@@ -32,7 +33,77 @@ export default {
           </Canvas>
         </div>
         <div class="echart">
-          <EchartDemo data={chartData} />
+          <EchartDemo data={toRaw(chartData)} />
+        </div>
+
+        <div class="vs">
+          <h1 class="vs-title">Echart vs F2</h1>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th></th>
+                <th width="130">echart</th>
+                <th width="130">f2</th>
+              </tr>
+            </thead>
+            <tbody class="tbody">
+              <tr>
+                <td>性能</td>
+                <td>良好</td>
+                <td class="yes">更优</td>
+              </tr>
+              <tr>
+                <td>易用性</td>
+                <td class="yes">更优</td>
+                <td>良好</td>
+              </tr>
+              <tr>
+                <td>兼容性</td>
+                <td>良好</td>
+                <td>良好</td>
+              </tr>
+              <tr>
+                <td>扩展性</td>
+                <td>良好</td>
+                <td class="yes">更优</td>
+              </tr>
+              <tr>
+                <td>包大小</td>
+                <td>良好</td>
+                <td class="yes">更优</td>
+              </tr>
+              <tr>
+                <td>社区</td>
+                <td class="yes">更优</td>
+                <td>一般</td>
+              </tr>
+              <tr>
+                <td>文档完整性</td>
+                <td class="yes">更优</td>
+                <td>一般</td>
+              </tr>
+              <tr>
+                <td>npm下载量</td>
+                <td class="yes">377000</td>
+                <td>2314</td>
+              </tr>
+              <tr>
+                <td>Star数</td>
+                <td class="yes">54k</td>
+                <td>7.8k</td>
+              </tr>
+              <tr>
+                <td>是否支持ts</td>
+                <td class="yes">支持</td>
+                <td>不支持</td>
+              </tr>
+              <tr>
+                <td>框架契合度</td>
+                <td class="yes">更优</td>
+                <td>良好</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     );
@@ -65,5 +136,24 @@ export default {
 .f2 {
   /* margin-bottom: 10px; */
   border-bottom: 1px solid #eee;
+}
+
+.vs-title {
+  text-align: center;
+  margin: 20px 0;
+  color: #666;
+}
+.tbl {
+  width: 100%;
+  padding-bottom: 10px;
+}
+.tbody tr td {
+  text-align: center;
+}
+.tbody tr td:first-child {
+  text-align: left;
+}
+.yes {
+  color: #ee1313;
 }
 </style>

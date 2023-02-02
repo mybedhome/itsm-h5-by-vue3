@@ -36,7 +36,7 @@ type EChartsOption = echarts.ComposeOption<
 onMounted(() => {
   setTimeout(() => {
     init();
-  }, 150);
+  }, 1000);
 });
 
 const init = () => {
@@ -89,7 +89,13 @@ const init = () => {
       },
     ],
   };
-  option && myChart.setOption(option);
+  const start = Date.now();
+  myChart.on('finished', () => {
+    console.log('finsihed', Date.now() - start);
+    myChart.off('finished');
+  });
+
+  myChart.setOption(option);
 };
 </script>
 

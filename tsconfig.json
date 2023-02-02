@@ -10,7 +10,8 @@
     "target": "ES6",
     "strict": true,
     "allowJs": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "jsxImportSource": "@antv/f2"
   },
   "references": [
     {
