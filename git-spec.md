@@ -29,3 +29,9 @@ https://www.ruanyifeng.com/blog/2015/08/git-use-process.html
 https://jaeger.itscoder.com/dev/2018/09/12/using-git-in-project.html
 
 https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow
+
+https://scicatproject.github.io/documentation/Development/Development_Methods.html
+
+https://sethrobertson.github.io/GitBestPractices/
+
+https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
