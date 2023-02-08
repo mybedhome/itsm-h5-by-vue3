@@ -74,7 +74,30 @@ git rebase origin/develop
 
 ## bug修复
 ## git提交规范
+规定格式如下：
+```
+<type>: #issue_number <subject> // 这行表示提交的主题
 
+<description> // 这行表示提交的详细说明
+```
+其中，type、issue_number、subject是必需的，description 可以省略。不管是哪一个部分，任何一行都不得超过50个字符。这是为了避免自动换行影响美观。
+
+### type取值说明
+type用于说明 commit 的类别:
+
+- feat: (feature)增加新功能
+- fix: 修复bug
+- docs: 只改动了文档相关的内容
+- style: 不影响代码含义的改动，例如去掉空格、改变缩进、增删分号(注意不是css修改)
+- build: 构造工具的或者外部依赖的改动，例如webpack，npm
+- refactor: 既不是修复bug也不是添加新功能的代码重构
+- revert：回滚到上一个版本，执行git revert打印的message
+- test: 添加测试或者修改现有测试
+- pref: 优化相关，提高性能或者用户体验的改动
+- chore: 其他不影响src源码的改动，例如构建过程或辅助工具的变动、增加依赖库
+
+### subject
+主题（subject）描述是简短的一句话，简单说明此次提交的内容，如果提交内容很多，一句话描述不清楚，在`<description>`描述块补充
 
 ## 版本发布管理规范
 ### 版本号介绍
@@ -132,8 +155,6 @@ git push origin --tags
 https://docs.gitlab.com/ee/topics/gitlab_flow.html
 
 https://nvie.com/posts/a-successful-git-branching-model/
-
-https://www.datree.io/resources/github-best-practices
 
 https://w3c.github.io/best-practices.html
 
