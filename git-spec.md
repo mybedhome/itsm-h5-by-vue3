@@ -3,12 +3,46 @@
 
 ## 分支介绍
 - master分支
-  
   - 所有提供给用户使用的正式版本，都基于这个分支发布
   - 开发人员不得在这个分支进行任何修改操作，此分支应当配置为受保护分支
+  - 此分支为只读分支
   
-- test分支
-  - 此分支用于给测试人员在测试环境进行测试
+- release/* 分支
+  - 基于 develop 或 master 分支检出。用于准备发布新阶段版本或者修复线上bug版本
+  - 此分支为预上线分支,用于给测试人员在测试环境进行测试
+  - 此分支仅包含要上线的功能代码，不上线的功能禁止合并到release分支
+  - 此分支为只读分支，测试通过后通过PR合并到master分支
+  
+- develop分支
+  - 开发分支，包含了项目最新的功能和代码，所有开发都依赖develop分支进行
+  - 此分支为只读分支, 只能从master、release、feature分支合并过来，任何时候都不能在此分支修改代码
+
+- feature/* 分支
+  - 功能分支，开发新的功能或者改动较大的调整，从develop分支切出feature分支
+  - 开发完后，提交Pull Request到develop分支合并，并删除feature分支
+  
+- hotfix/* 分支
+  - 生产环境bug修复分支，基于master分支检出
+  - 属于临时分支，当生产环境出现 bug ，管理员基于 tag 创建 hotfix/ 分支、release/<版本号>分支，由开发人员在hotfix分支修复bug，修复完成后，再向 release 分支提交 pull request 申请。bug修复完成上线之后可删除此分支
+  
+- bugfix/* 分支
+  - 预上线环境 bug 修复分支，基于 release 分支检出
+  - 此分支属于临时分支，当提测阶段中存在 bug 需要修复，由开发人员基于 release 分支创建 bugfix/ 分支，然后在 bugfix/ 分支进行修复 bug 。 bug 修复完成后，再向 release 分支提交 pull request 申请。bug修复完成 release 分支测试通过之后可删除此分支
+  
+## 分支命名规范
+**release分支**
+  
+以待发布的版本号为分支名称，如 release/v1.0.0, release/v1.0.0-alpha.1
+
+**hotfix分支**
+
+以修复人员的名字为分支名称，如 hotfix/wuhan
+
+**bugfix分支**
+
+同hotfix分支，以修复人员的名字为分支名称，如 hotfix/wuhan
+
+**feature分支**
 
 ## git工作流规范
 
