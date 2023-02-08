@@ -1,7 +1,7 @@
 # 前言
 为了方便开发人员后续追溯bug原因、版本发布、changelog自动生成、以及更好的团队开发协作，特制定此git使用规范。
 
-## 分支介绍
+# 分支介绍
 - master分支
   - 所有提供给用户使用的正式版本，都基于这个分支发布
   - 开发人员不得在这个分支进行任何修改操作，此分支应当配置为受保护分支
@@ -14,7 +14,7 @@
   - 此分支为只读分支，测试通过后通过PR合并到master分支
   
 - develop分支
-  - 开发分支，包含了项目最新的功能和代码，所有开发都依赖develop分支进行
+  - 主开发分支，包含了项目最新的功能和代码，所有开发都依赖develop分支进行
   - 此分支为只读分支, 只能从master、release、feature分支合并过来，任何时候都不能在此分支修改代码
 
 - feature/* 分支
@@ -29,24 +29,50 @@
   - 预上线环境 bug 修复分支，基于 release 分支检出
   - 此分支属于临时分支，当提测阶段中存在 bug 需要修复，由开发人员基于 release 分支创建 bugfix/ 分支，然后在 bugfix/ 分支进行修复 bug 。 bug 修复完成后，再向 release 分支提交 pull request 申请。bug修复完成 release 分支测试通过之后可删除此分支
   
-## 分支命名规范
+# 分支命名规范
 **release分支**
   
 以待发布的版本号为分支名称，如 release/v1.0.0, release/v1.0.0-alpha.1
 
 **hotfix分支**
 
-以修复人员的名字为分支名称，如 hotfix/wuhan
+以修复人的名称加上JIRA上的bugId，如 hotfix/wuhan-2879
 
 **bugfix分支**
 
-同hotfix分支，以修复人员的名字为分支名称，如 hotfix/wuhan
+以修复人员的名字为分支名称，如 bugfix/wuhan
 
 **feature分支**
 
-## git工作流规范
+以featureId加功能简单描述为规则，如feature/2879-add-user
+# git工作流规范
+
+## 正常开发
+开发前克隆develop分支到本地
+`git clone -b develop http://xxx.git`
+
+### 第一步：新建feature分支
+从develop分支检出功能分支并切换到该功能分支
+`git checkout -b feature/xxx origin/develop`
 
 
+### 第二步：同步主开发分支最新代码
+当功能分支开发一段时间后，主开发分支可能又有其他开发人员推送了最新代码，需要及时合并以免到最后出现大规模冲突代码
+```
+git fetch origin
+git rebase origin/develop
+```
+
+### 第三步: 提交feature分支
+当功能分支开发完成后，需要将feature分支推送到远程，然后发起PR请求合并到develop分支，在推送feature分支之前最好先在本地压缩下历史提交记录。
+
+**压缩提交** 对git命令不熟悉的人可以跳过此步骤
+
+`git rebase -i origin/develop`
+
+然后推送到远程 `git push -u origin feature/xxx`
+
+## bug修复
 ## git提交规范
 
 
@@ -126,3 +152,5 @@ https://scicatproject.github.io/documentation/Development/Development_Methods.ht
 https://sethrobertson.github.io/GitBestPractices/
 
 https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+
+https://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html
