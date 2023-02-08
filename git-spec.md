@@ -1,7 +1,7 @@
 # 前言
 为了方便开发人员后续追溯bug原因、版本发布、changelog自动生成、以及更好的团队开发协作，特制定此git使用规范。
 
-## 分支介绍
+# 分支介绍
 - master分支
   - 所有提供给用户使用的正式版本，都基于这个分支发布
   - 开发人员不得在这个分支进行任何修改操作，此分支应当配置为受保护分支
@@ -14,7 +14,7 @@
   - 此分支为只读分支，测试通过后通过PR合并到master分支
   
 - develop分支
-  - 开发分支，包含了项目最新的功能和代码，所有开发都依赖develop分支进行
+  - 主开发分支，包含了项目最新的功能和代码，所有开发都依赖develop分支进行
   - 此分支为只读分支, 只能从master、release、feature分支合并过来，任何时候都不能在此分支修改代码
 
 - feature/* 分支
@@ -29,26 +29,111 @@
   - 预上线环境 bug 修复分支，基于 release 分支检出
   - 此分支属于临时分支，当提测阶段中存在 bug 需要修复，由开发人员基于 release 分支创建 bugfix/ 分支，然后在 bugfix/ 分支进行修复 bug 。 bug 修复完成后，再向 release 分支提交 pull request 申请。bug修复完成 release 分支测试通过之后可删除此分支
   
-## 分支命名规范
+# 分支命名规范
 **release分支**
   
 以待发布的版本号为分支名称，如 release/v1.0.0, release/v1.0.0-alpha.1
 
 **hotfix分支**
 
-以修复人员的名字为分支名称，如 hotfix/wuhan
+以修复人的名称加上JIRA上的bugId，如 hotfix/wuhan-2879
 
 **bugfix分支**
 
-同hotfix分支，以修复人员的名字为分支名称，如 hotfix/wuhan
+以修复人员的名字为分支名称，如 bugfix/wuhan
 
 **feature分支**
 
-## git工作流规范
+以featureId加功能简单描述为规则，如feature/2879-add-user
+# git工作流规范
+
+## 功能开发
+开发前克隆develop分支到本地
+`git clone -b develop http://xxx.git`
+
+### 第一步：新建feature分支
+从develop分支检出功能分支并切换到该功能分支
+`git checkout -b feature/xxx origin/develop`
+
+
+### 第二步：同步主开发分支最新代码
+当功能分支开发一段时间后，主开发分支可能又有其他开发人员推送了最新代码，需要及时合并以免到最后出现大规模冲突代码
+```
+git fetch origin
+git rebase origin/develop
+```
+
+### 第三步: 提交feature分支
+每次完成一个小功能开发都要及时提交，不要等到全部功能开发完成后再提交所有。在推送代码之前先执行一下第二步，拉取最新代码到当前分支
+
+**提交代码**
+
+```
+git add .
+git commit -m "描述这次提交改动的内容"
+
+准备推送前，执行一下第二步同步远程最新代码，首次推送代码到远程服务器使用-u参数，后面直接使用git push即可
+git push -u origin feature/xxx
+```
+当功能分支开发完成后，发起PR请求合并到develop分支，在推送feature分支之前最好先在本地压缩下历史提交记录。
+
+**压缩提交** 
+
+对git命令不熟悉的人可以跳过此步骤
+
+`git rebase -i origin/develop`
+
+当rebase操作完成后，执行`git  push`命令推送到远程，最后发起PR请求让管理员合并到develop分支
+
+## bug修复
+bug修复流程功能开发相同，当所有功能都开发完成后且都合并到了develop分支，然后管理员通过PR的形式合并到release分支，测试人员基于release分支在测试环境测试，开发人员基于release分支新建bugfix分支，bug修复完成后合并到release分支，测试阶段每个开发人员分配的Bug比较多，不要改一个合一个，多改几个再合并。
+
+### 工作流示例
+```
+拉取最新代码到本地
+git fetch origin 
+
+从release分支检出新的Bug修复分支
+git checkout -b bugfix/wuhan origin/release/v1.0.0
+
+提交代码到本地
+git add .
+git commit -m "描述这次提交改动的内容"
+
+准备推送到远程前，更新最新代码
+git fetch origin
+git rebase origin/release/v1.0.0
+
+推送到远程，拉取最新代码后如果有冲突先修复冲突再提交推送
+git push -u origin bugfix/wuhan
+```
 
 
 ## git提交规范
+规定格式如下：
+```
+<type>: #issue_number <subject> // 这行表示提交的主题
 
+<description> // 这行表示提交的详细说明
+```
+其中，type、issue_number、subject是必需的，description 可以省略。不管是哪一个部分，任何一行都不得超过50个字符。这是为了避免自动换行影响美观。
+
+### type取值说明
+type用于说明 commit 的类别:
+
+- feat: (feature)增加新功能
+- fix: 修复bug
+- docs: 只改动了文档相关的内容
+- style: 不影响代码含义的改动，例如去掉空格、改变缩进、增删分号(注意不是css修改)
+- build: 构造工具的或者外部依赖的改动，例如webpack，npm
+- refactor: 既不是修复bug也不是添加新功能的代码重构
+- revert：回滚到上一个版本，执行git revert打印的message
+- test: 添加测试或者修改现有测试
+- pref: 优化相关，提高性能或者用户体验的改动
+- chore: 其他不影响src源码的改动，例如构建过程或辅助工具的变动、增加依赖库
+
+### subject
+主题（subject）描述是简短的一句话，简单说明此次提交的内容，如果提交内容很多，一句话描述不清楚，在`<description>`描述块补充
 
 ## 版本发布管理规范
 ### 版本号介绍
@@ -107,8 +192,6 @@ https://docs.gitlab.com/ee/topics/gitlab_flow.html
 
 https://nvie.com/posts/a-successful-git-branching-model/
 
-https://www.datree.io/resources/github-best-practices
-
 https://w3c.github.io/best-practices.html
 
 https://w3c.github.io/git.html
@@ -126,3 +209,5 @@ https://scicatproject.github.io/documentation/Development/Development_Methods.ht
 https://sethrobertson.github.io/GitBestPractices/
 
 https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+
+https://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html
