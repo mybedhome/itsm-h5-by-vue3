@@ -88,7 +88,7 @@ git push -u origin feature/xxx
 ## bug修复
 bug修复流程功能开发相同，当所有功能都开发完成后且都合并到了develop分支，然后管理员通过PR的形式合并到release分支，测试人员基于release分支在测试环境测试，开发人员基于release分支新建bugfix分支，bug修复完成后合并到release分支，测试阶段每个开发人员分配的Bug比较多，不要改一个合一个，多改几个再合并。
 
-### 工作流示例
+### bug修复工作流示例
 ```
 拉取最新代码到本地
 git fetch origin 
@@ -240,3 +240,5 @@ https://sethrobertson.github.io/GitBestPractices/
 https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
 
 https://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html
+
+https://zj-git-guide.readthedocs.io/zh_CN/latest/message/Conventional%E6%8F%90%E4%BA%A4%E8%A7%84%E8%8C%83/
