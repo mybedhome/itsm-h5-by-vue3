@@ -76,11 +76,11 @@ git rebase origin/develop
 ## git提交规范
 规定格式如下：
 ```
-<type>: #issue_number <subject> // 这行表示提交的主题
+<type>: <subject>#issue_number  // 这行表示提交的主题
 
 <description> // 这行表示提交的详细说明
 ```
-其中，type、issue_number、subject是必需的，description 可以省略。不管是哪一个部分，任何一行都不得超过50个字符。这是为了避免自动换行影响美观。
+其中，type、subject是必需的，description 可以省略。issue_number如果jira上有对应的bug一定要加上，如果是自测发现的bug可以不加；不管是哪一个部分，任何一行都不得超过50个字符。这是为了避免自动换行影响美观。
 
 ### type取值说明
 type用于说明 commit 的类别:
@@ -96,8 +96,20 @@ type用于说明 commit 的类别:
 - pref: 优化相关，提高性能或者用户体验的改动
 - chore: 其他不影响src源码的改动，例如构建过程或辅助工具的变动、增加依赖库
 
+### issue_number
+jira上的bug号，用#号加bugID表示， 如#7897
+
 ### subject
-主题（subject）描述是简短的一句话，简单说明此次提交的内容，如果提交内容很多，一句话描述不清楚，在`<description>`描述块补充
+主题（subject）描述是简短的一句话，简单说明此次提交的内容，如果提交内容很多，一句话描述不清楚，在`<description>`描述块补充。
+
+执行`git commit --amend`会弹出一个编辑提交说明的窗口，主题和描述之间要换行
+
+### 提交示例
+```
+git commit -m "fix: 上传文件未校验文件类型#itsm-2378"
+
+git commit -m "feat: 新增用户管理模块"
+```
 
 ## 版本发布管理规范
 ### 版本号介绍
