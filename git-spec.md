@@ -8,8 +8,6 @@
     - [第三步: 提交feature分支](#第三步-提交feature分支)
   - [bug修复](#bug修复)
   - [bug修复流程示例](#bug修复流程示例)
-    - [第二步：同步主开发分支最新代码](#第二步同步主开发分支最新代码-1)
-    - [第三步: 提交feature分支](#第三步-提交feature分支-1)
   - [代码提交规范](#代码提交规范)
     - [type取值说明](#type取值说明)
     - [issue\_number](#issue_number)
@@ -133,23 +131,6 @@ git rebase origin/release/v1.0.0
 git push -u origin bugfix/wuhan
 ```
 
-
-### 第二步：同步主开发分支最新代码
-当功能分支开发一段时间后，主开发分支可能又有其他开发人员推送了最新代码，需要及时合并以免到最后出现大规模冲突代码
-```
-git fetch origin
-git rebase origin/develop
-```
-
-### 第三步: 提交feature分支
-当功能分支开发完成后，需要将feature分支推送到远程，然后发起PR请求合并到develop分支，在推送feature分支之前最好先在本地压缩下历史提交记录。
-
-**压缩提交** 对git命令不熟悉的人可以跳过此步骤
-
-`git rebase -i origin/develop`
-
-然后推送到远程 `git push -u origin feature/xxx`
-
 ## 代码提交规范
 规定格式如下：
 ```
@@ -187,6 +168,7 @@ git commit -m "fix: 上传文件未校验文件类型#itsm-2378"
 
 git commit -m "feat: 新增用户管理模块"
 ```
+
 
 ## 版本发布管理规范
 ### 版本号介绍
