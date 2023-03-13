@@ -1,6 +1,11 @@
 <template>
   <ul class="order-block">
-    <li class="order-item" v-for="order in props.data" :key="order.id">
+    <li
+      class="order-item"
+      v-for="order in props.data"
+      :key="order.id"
+      @click="handleJump"
+    >
       <div class="order-avatar">
         {{ displayAvatarText(order.createUser.userName) }}
       </div>
@@ -27,6 +32,8 @@
 <script setup lang="ts">
 import type { OrderListData } from '@/services/model/orderModel';
 import dayjs from 'dayjs';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const props = defineProps<{ data: OrderListData }>();
 
 const getOrderStatusMap = (status: number) => {
@@ -43,6 +50,10 @@ const formatDate = (d: number) => dayjs(d).format('YYYY-MM-DD HH:mm:ss');
 
 const displayAvatarText = (name: string) => {
   return /^\w/.test(name) ? name.slice(0, 1) : name.slice(-2);
+};
+
+const handleJump = () => {
+  router.push({ name: 'demo' });
 };
 </script>
 
