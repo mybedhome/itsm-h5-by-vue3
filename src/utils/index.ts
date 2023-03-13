@@ -116,6 +116,15 @@ const delay = <D>(timeout: number, data?: D) => {
   });
 };
 
+const px2vw = (
+  px: number,
+  options = {} as { hasUnit: boolean; baseWidth: number }
+): string => {
+  const opt = Object.assign({ hasUnit: true, baseWidth: 375 }, options);
+  const value = ((px / opt.baseWidth) * 100).toString();
+  return opt.hasUnit ? value + 'vw' : value;
+};
+
 export const utils = {
   isNull,
   isUndefined,
@@ -147,5 +156,5 @@ export const utils = {
   formDataToObject,
   delay,
   guid,
-  getRandom,
+  px2vw,
 };
