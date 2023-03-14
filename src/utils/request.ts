@@ -7,6 +7,7 @@ import { useLoginInfoStore } from '@/stores/loginInfo';
 import { utils } from '@/utils';
 import { useRequestStore } from '@/stores/request';
 import { HttpStatusCode, HttpStatusText } from '@/types/HttpStatusMap';
+
 export type ApiErrorResult = {
   message: string;
   name: string;
@@ -64,7 +65,7 @@ const handleError = (error: any) => {
 request.interceptors.request.use((config) => {
   if (config.headers) {
     (config.headers as CustomAxiosHeaders).Authorization =
-      useLoginInfoStore().loginInfo.token;
+      useLoginInfoStore().accessToken;
   }
   const { addRequest } = useRequestStore();
   addRequest(config);

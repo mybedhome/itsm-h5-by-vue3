@@ -26,6 +26,8 @@ import 'vant/lib/index.css';
 import '@vant/touch-emulator';
 import type { VueModuleNamespace } from './types/VueModuleNamespace';
 import { login } from './services/app';
+import { useLoginInfoStore } from './stores/loginInfo';
+const { setLoginInfo } = useLoginInfoStore();
 const app = createApp(App);
 
 app.use(createPinia());
@@ -67,9 +69,19 @@ const mount = () => app.mount('#app');
 const authorize = () => {
   const query = window.location.search;
   if (query.includes('code') && query.includes('state')) {
+    sessionStorage.setItem('redirect', location.href);
     window.location.href = location.href.replace(query, '');
   } else {
-    login({ url: location.href, sid: '', token: '' }).then(() => {
+    login({
+      url: sessionStorage.getItem('redirect') || '',
+      sid: '',
+      token: '',
+    }).then((res: any) => {
+      console.log('res', res);
+      sessionStorage.removeItem('redirect');
+      localStorage.setItem('logined_info', res);
+      setLoginInfo(res);
+      debugger;
       mount();
     });
   }
