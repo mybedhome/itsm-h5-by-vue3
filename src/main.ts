@@ -25,6 +25,7 @@ import './assets/base.css';
 import 'vant/lib/index.css';
 import '@vant/touch-emulator';
 import type { VueModuleNamespace } from './types/VueModuleNamespace';
+import { login } from './services/app';
 const app = createApp(App);
 
 app.use(createPinia());
@@ -61,4 +62,17 @@ const registerGlobalComponent = () => {
 };
 registerGlobalComponent();
 
-app.mount('#app');
+const mount = () => app.mount('#app');
+
+const authorize = () => {
+  const query = window.location.search;
+  if (query.includes('code') && query.includes('state')) {
+    window.location.href = location.href.replace(query, '');
+  } else {
+    login({ url: location.href, sid: '', token: '' }).then(() => {
+      mount();
+    });
+  }
+};
+
+authorize();

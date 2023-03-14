@@ -24,34 +24,32 @@
         @load="onLoad"
         finished-text="没有更多了"
       >
-        <div>
-          <div class="menu-block" v-if="isWorkbenchRoute">
-            <van-grid :border="false" :icon-size="67">
-              <van-grid-item
-                v-for="{ icon, text, name } in menus"
-                :key="text"
-                :icon="icon"
-                :text="text"
-                :badge="text == '我的待办' ? count : ''"
-                :badge-props="badgeProps"
-                icon-prefix="workbench-menu-icon"
-                @click="handleJump(name)"
-              />
-            </van-grid>
-          </div>
-          <ul class="filter-block" v-if="hasFilterParams">
-            <li class="filter-header">
-              <span>筛选条件：</span>
-              <span
-                ><van-icon name="close" size="18px" @click="handleFilterClear"
-              /></span>
-            </li>
-            <li v-for="(item, index) in filterResult" :key="index">
-              <span>{{ item.label }}: </span>
-              <span>{{ item.name }}</span>
-            </li>
-          </ul>
+        <div class="menu-block" v-if="isWorkbenchRoute">
+          <van-grid :border="false" :icon-size="67">
+            <van-grid-item
+              v-for="{ icon, text, name } in menus"
+              :key="text"
+              :icon="icon"
+              :text="text"
+              :badge="text == '我的待办' ? count : ''"
+              :badge-props="badgeProps"
+              icon-prefix="workbench-menu-icon"
+              @click="handleJump(name)"
+            />
+          </van-grid>
         </div>
+        <ul class="filter-block" v-if="hasFilterParams">
+          <li class="filter-header">
+            <span>筛选条件：</span>
+            <span
+              ><van-icon name="close" size="18px" @click="handleFilterClear"
+            /></span>
+          </li>
+          <li v-for="(item, index) in filterResult" :key="index">
+            <span>{{ item.label }}: </span>
+            <span>{{ item.name }}</span>
+          </li>
+        </ul>
         <OrderList :data="data" />
       </van-list>
       <OrderFilter
@@ -212,14 +210,17 @@ const debounceScroll = throttle(
   align-items: center;
   height: 55px;
 }
+
 .content-section {
   height: calc(100vh - 105px);
   overflow-y: auto;
 }
+
 .page-content-section {
   height: calc(100vh - 55px);
   overflow: auto;
 }
+
 .menu-block {
   background-color: #fff;
 }
@@ -229,6 +230,7 @@ const debounceScroll = throttle(
   padding: 10px 0 5px 15px;
   background-color: #fff;
   font-size: 15px;
+
   .filter-header {
     display: flex;
     align-items: center;
@@ -236,6 +238,7 @@ const debounceScroll = throttle(
     padding-right: 5px;
     color: $primaryTextColor;
   }
+
   li {
     color: $secondaryTextColor;
     margin-bottom: 4px;
