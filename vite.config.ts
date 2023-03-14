@@ -35,7 +35,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        // target: 'http://localhost:8000',
+        target: 'http://demo.bessystem.com:32113/itsm/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },

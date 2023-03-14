@@ -30,6 +30,37 @@ const request = axios.create({
   timeout: 60 * 1000,
 });
 
+/** 错误处理 */
+const handleError = (error: any) => {
+  if (error.__CANCEL__ || (error.config && error.config.signal.aborted)) {
+    return Promise.reject({
+      message: error.config.signal.reason,
+      name: error.name,
+      data: null,
+      url: error.config.url,
+    });
+  }
+  if (error.response) {
+    const { status, data } = error.response;
+    const code = HttpStatusCode[status] as keyof typeof HttpStatusText;
+    const errorResult: ApiErrorResult = {
+      name: error.name,
+      message: data?.message || HttpStatusText[code],
+      data,
+      url: error.config.url,
+    };
+
+    if (status === HttpStatusCode.UNAUTHORIZED) {
+      window.location.href = data?.data?.url;
+    } else if (status === HttpStatusCode.FORBIDDEN) {
+      // 5秒后重定向到统一认证
+      utils.delay(5000).then(() => (window.location.href = data?.url));
+    }
+    return Promise.reject(errorResult);
+  }
+};
+
+/** 请求拦截器 */
 request.interceptors.request.use((config) => {
   if (config.headers) {
     (config.headers as CustomAxiosHeaders).Authorization =
@@ -40,6 +71,7 @@ request.interceptors.request.use((config) => {
   return config;
 });
 
+/** 响应拦截器 */
 request.interceptors.response.use(
   (response: AxiosResponse<ApiSuccessResult>) => {
     const { removeRequest } = useRequestStore();
@@ -47,50 +79,24 @@ request.interceptors.response.use(
     removeRequest(response.config);
     return response.data.data;
   },
-  (error) => {
-    if (error.__CANCEL__ || error.config.signal.aborted) {
-      return Promise.reject({
-        message: error.config.signal.reason,
-        name: error.name,
-        data: null,
-        url: error.config.url,
-      });
-    }
-    if (error.response) {
-      const { status, data } = error.response;
-      const code = HttpStatusCode[status] as keyof typeof HttpStatusText;
-      const errorResult: ApiErrorResult = {
-        name: error.name,
-        message: data?.message || HttpStatusText[code],
-        data,
-        url: error.config.url,
-      };
-
-      if (status === HttpStatusCode.UNAUTHORIZED) {
-        window.location.href = data?.data?.url;
-      } else if (status === HttpStatusCode.FORBIDDEN) {
-        // 5秒后重定向到统一认证
-        utils.delay(5000).then(() => (window.location.href = data?.url));
-      }
-      return Promise.reject(errorResult);
-    }
-  }
+  handleError
 );
 
+/** 封装增删改查方法 */
 class Http {
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     return request.get(url, config);
   }
   async post<T>(
     url: string,
-    data: any,
+    data?: any,
     config?: AxiosRequestConfig
   ): Promise<T> {
     return request.post(url, data, config);
   }
   async put<T>(
     url: string,
-    data: any,
+    data?: any,
     config?: AxiosRequestConfig
   ): Promise<T> {
     return request.post(url, data, config);
