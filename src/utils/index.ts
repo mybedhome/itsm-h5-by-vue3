@@ -35,8 +35,22 @@ const isValidArray = (arg: any) => isArray(arg) && arg.length > 0;
 const isPlainObject = (arg: { constructor?: Function }): boolean =>
   !isNil(arg) && arg.constructor === Object;
 
-const isEmptyPlainObject = (arg: any) => {
+const isEmptyObject = (arg: any) => {
   return !isPlainObject(arg) || Object.keys(arg).length === 0;
+};
+
+const isEmpty = (arg: any) => {
+  if (
+    typeof arg === 'undefined' ||
+    arg === null ||
+    Number.isNaN(arg) ||
+    arg === '' ||
+    Object.keys(arg).length === 0 ||
+    (Array.isArray(arg) && arg.length === 0)
+  ) {
+    return true;
+  }
+  return false;
 };
 
 // 解析json字符串为json对象
@@ -49,24 +63,22 @@ const parseJSON = <V = Object>(arg: any, failResult = {} as V): V => {
   }
 };
 
-// 生成guid随机数
-const guid = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
+/**
+ * @param { boolean } hasHyphen 是否有连字符号
+ * @returns 唯一的guid
+ */
+const guid = (hasHyphen?: boolean) => {
+  const id = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'.replace(/x/g, function () {
+    return (~~(Math.random() * 16)).toString(16);
   });
+  return hasHyphen !== false ? id : id.replaceAll('-', '');
 };
 
-// 将formData转换为纯文本对象
-const formDataToObject = (fd: FormData) => {
-  if (!(fd instanceof FormData)) return fd;
-  const uniqueArray = Array.from(new Set(Array.from(fd.keys())));
-  return uniqueArray.reduce((acc: { [propName: string]: any }, key) => {
-    const values = fd.getAll(key);
-    acc[key] = values.length > 1 ? values : values[0];
-    return acc;
-  }, {});
+// 查找对象属性的值，支持路径嵌套查询
+export const find = (obj: { [key: string]: unknown }, ...paths: any[]) => {
+  return paths.reduce((acc, path) => {
+    return acc?.[path];
+  }, obj);
 };
 
 const delay = <D>(timeout: number, data?: D) => {
@@ -84,6 +96,30 @@ const px2vw = (
   const opt = Object.assign({ hasUnit: true, baseWidth: 375 }, options);
   const value = ((px / opt.baseWidth) * 100).toString();
   return opt.hasUnit ? value + 'vw' : value;
+};
+
+// 将formData转换为json
+const formDataToJson = (fd: FormData) => {
+  if (!(fd instanceof FormData)) return fd;
+  return Array.from(new Set(Array.from(fd.keys()))).reduce(
+    (acc: { [propName: string]: any }, key) => {
+      const values = fd.getAll(key);
+      acc[key] = values.length > 1 ? values : values[0];
+      return acc;
+    },
+    {}
+  );
+};
+
+// 将json转换为FormData
+export const jsonToFormData = (data: { [key: string]: any }) => {
+  const formData = new FormData();
+  if (!isEmptyObject(data)) {
+    for (const key in data) {
+      formData.append(key, data[key]);
+    }
+  }
+  return formData;
 };
 
 export const utils = {
@@ -112,10 +148,13 @@ export const utils = {
   isEmptyArray,
   isValidArray,
   isPlainObject,
-  isEmptyPlainObject,
+  isEmptyObject,
+  isEmpty,
   parseJSON,
-  formDataToObject,
+  formDataToJson,
+  jsonToFormData,
   delay,
   guid,
   px2vw,
+  find,
 };
