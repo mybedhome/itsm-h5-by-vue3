@@ -54,7 +54,10 @@ const isEmpty = (arg: any) => {
 };
 
 // 解析json字符串为json对象
-const parseJSON = <V = Object>(arg: any, failResult = {} as V): V => {
+const parseJSON = <V = { [key: string]: any }>(
+  arg: any,
+  failResult = {} as V
+): V => {
   try {
     return JSON.parse(arg);
   } catch (error: any) {
