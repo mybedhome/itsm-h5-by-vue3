@@ -93,9 +93,23 @@ request.interceptors.response.use(
 );
 
 /** 封装增删改查方法 */
+type ApiResult<T> = { data: T; error: ApiErrorResult | null };
 class Http {
-  async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return request.get(url, config);
+  async capture<T>(request: Promise<ApiResult<T>>): Promise<ApiResult<T>> {
+    let data;
+    try {
+      data = await request;
+      return { data, error: null };
+    } catch (error) {
+      return { data, error };
+    }
+  }
+
+  async get<T>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<ApiResult<T>> {
+    return this.capture<T>(request.get(url, config));
   }
   async post<T>(
     url: string,
