@@ -84,12 +84,12 @@ const router = createRouter({
 });
 
 // 路由跳转前取消所有未完成的请求
-router.beforeEach(() => {
-  const { clearPendingRequest, request } = useRequestStore();
-  console.log('cancel', request);
+// router.beforeEach(() => {
+//   const { clearPendingRequest, request } = useRequestStore();
+//   console.log('cancel', request);
 
-  // clearPendingRequest();
-});
+//   // clearPendingRequest();
+// });
 
 router.afterEach((to, from) => {
   const toDepth = to.path.split('/').length;

@@ -1,3 +1,4 @@
+import type { LoginInfo } from '@/stores/loginInfo';
 import { http } from '@/utils/request';
 
 interface UpdateTokenData {
@@ -7,5 +8,5 @@ interface UpdateTokenData {
 }
 
 export const login = (data: UpdateTokenData) => {
-  return http.post('/authorize/token', data);
+  return http.post<LoginInfo>('/authorize/token', data);
 };

@@ -18,13 +18,7 @@ const activeView = computed(() => {
   return active.value === 0 ? Workbench : Statistics;
 });
 
-onMounted(() => {
-  Cookies.set('f#多少oo', 'bar电视剧&$#@');
-  const r = Cookies.get('f#多少oo');
-  console.log('test', r === decodeURI('bar电视剧&$#@'));
-  console.log('cs==', Cookies.get('cs'));
-  console.log('test2', r);
-});
+onMounted(() => {});
 </script>
 <script lang="ts">
 export default { name: 'HomeView' };

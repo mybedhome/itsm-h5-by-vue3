@@ -3,7 +3,7 @@ import axios, {
   type RawAxiosRequestHeaders,
   type AxiosResponse,
 } from 'axios';
-import { useLoginInfoStore } from '@/stores/loginInfo';
+import { useLoginInfoStore, type TokenInfo } from '@/stores/loginInfo';
 import { utils } from '@/utils';
 import { useRequestStore } from '@/stores/request';
 import { HttpStatusCode, HttpStatusText } from '@/types/HttpStatusMap';
@@ -22,7 +22,7 @@ export type ApiSuccessResult<T = any> = {
 };
 
 type CustomAxiosHeaders = RawAxiosRequestHeaders & {
-  Authorization: string;
+  Authorization: string | null;
 };
 
 const request = axios.create({
@@ -33,7 +33,7 @@ const request = axios.create({
 
 /** 错误处理 */
 const handleError = (error: any) => {
-  if (error.__CANCEL__ || (error.config && error.config.signal.aborted)) {
+  if (error.__CANCEL__ || (error.config && error.config?.signal?.aborted)) {
     return Promise.reject({
       message: error.config.signal.reason,
       name: error.name,
@@ -52,7 +52,10 @@ const handleError = (error: any) => {
     };
 
     if (status === HttpStatusCode.UNAUTHORIZED) {
-      window.location.href = data?.data?.url;
+      console.log('data', data);
+      if (!sessionStorage.getItem('redirect')) {
+        window.location.href = data?.data?.url;
+      }
     } else if (status === HttpStatusCode.FORBIDDEN) {
       // 5秒后重定向到统一认证
       utils.delay(5000).then(() => (window.location.href = data?.url));
@@ -63,21 +66,27 @@ const handleError = (error: any) => {
 
 /** 请求拦截器 */
 request.interceptors.request.use((config) => {
-  if (config.headers) {
-    (config.headers as CustomAxiosHeaders).Authorization =
-      useLoginInfoStore().accessToken;
+  const tokenInfo = utils.parseJSON<TokenInfo>(
+    localStorage.getItem('tokenInfo')
+  );
+  if (config.headers && tokenInfo) {
+    (
+      config.headers as CustomAxiosHeaders
+    ).Authorization = `${tokenInfo.token_type} ${tokenInfo.access_token}`;
+
+    // console.log('loginifno', useLoginInfoStore().accessToken);
   }
-  const { addRequest } = useRequestStore();
-  addRequest(config);
+  // const { addRequest } = useRequestStore();
+  // addRequest(config);
   return config;
 });
 
 /** 响应拦截器 */
 request.interceptors.response.use(
   (response: AxiosResponse<ApiSuccessResult>) => {
-    const { removeRequest } = useRequestStore();
-    // 请求完成从store里移除
-    removeRequest(response.config);
+    // const { removeRequest } = useRequestStore();
+    // // 请求完成从store里移除
+    // removeRequest(response.config);
     return response.data.data;
   },
   handleError
