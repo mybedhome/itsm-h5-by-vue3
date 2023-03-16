@@ -9,7 +9,7 @@ import { useRoute } from 'vue-router';
 import type { OrderQueryCondition } from '@/services/model/orderModel';
 import type { OrderFilterConfirmEventParams } from '@/views/components/OrderFilter';
 
-function useOrderFilter(props: any) {
+export function useOrderFilter(props: any) {
   console.log('props', props);
   const isDraftRoute = useRoute().name === RouteName.ORDERDRAFT;
   const columns = ref<Column[]>([
@@ -78,9 +78,9 @@ function useOrderFilter(props: any) {
       pageSize: 100000,
       pageNo: 1,
     });
-    columns.value[0].data = services.items;
-    const engineUsers = await getEngineUsers();
-    columns.value[2].data = engineUsers;
+    columns.value[0].data = services.data.items;
+    const { data } = await getEngineUsers();
+    columns.value[2].data = data;
   };
   initRequest();
 
@@ -100,5 +100,3 @@ function useOrderFilter(props: any) {
     return expose;
   }
 }
-
-export { useOrderFilter };

@@ -13,7 +13,7 @@ export async function authorize() {
       if (res) {
         sessionStorage.removeItem('url');
         localStorage.setItem('loginInfo', JSON.stringify(res));
-        localStorage.setItem('tokenInfo', res.token);
+        localStorage.setItem('tokenInfo', res.data.token);
       }
     });
   }

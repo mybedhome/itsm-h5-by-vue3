@@ -26,9 +26,9 @@ import 'vant/lib/index.css';
 import '@vant/touch-emulator';
 import type { VueModuleNamespace } from './types/VueModuleNamespace';
 import { login } from './services/app';
-import { useLoginInfoStore, type LoginInfo } from './stores/loginInfo';
 import { utils } from '@/utils/index';
 import type { App } from 'vue';
+import { http } from './utils/request';
 
 const registerGlobalComponent = (app: App<Element>) => {
   const components = import.meta.glob('./components/**/*.vue', {
@@ -42,9 +42,9 @@ const registerGlobalComponent = (app: App<Element>) => {
   });
 };
 
+const app = createApp(Root);
+app.use(createPinia());
 const mount = () => {
-  const app = createApp(Root);
-  app.use(createPinia());
   app.use(router);
 
   app
@@ -77,10 +77,10 @@ const authorize = () => {
     login({
       url: sessionStorage.getItem('redirect') || location.href,
     }).then((res) => {
-      if (res) {
+      if (!res.error) {
         sessionStorage.removeItem('redirect');
         localStorage.setItem('loginInfo', JSON.stringify(res));
-        localStorage.setItem('tokenInfo', res.token);
+        localStorage.setItem('tokenInfo', res.data.token);
         mount();
       }
     });

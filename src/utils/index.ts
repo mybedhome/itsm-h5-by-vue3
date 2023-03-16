@@ -54,7 +54,7 @@ const isEmpty = (arg: any) => {
 };
 
 // 解析json字符串为json对象
-const parseJSON = <V = { [key: string]: any }>(
+const parseJSON = <V = Record<string, unknown>>(
   arg: any,
   failResult = {} as V
 ): V => {
@@ -78,7 +78,7 @@ const guid = (hasHyphen?: boolean) => {
 };
 
 // 查找对象属性的值，支持路径嵌套查询
-export const find = (obj: { [key: string]: unknown }, ...paths: any[]) => {
+export const find = (obj: Record<string, unknown>, ...paths: any[]) => {
   return paths.reduce((acc, path) => {
     return acc?.[path];
   }, obj);
@@ -115,14 +115,21 @@ const formDataToJson = (fd: FormData) => {
 };
 
 // 将json转换为FormData
-export const jsonToFormData = (data: { [key: string]: any }) => {
-  const formData = new FormData();
+export const jsonToFormData = (data: Record<string, unknown>) => {
+  const fd = new FormData();
   if (!isEmptyObject(data)) {
-    for (const key in data) {
-      formData.append(key, data[key]);
+    for (const key of Object.keys(data)) {
+      const value = data[key];
+      if (value instanceof Blob) {
+        fd.append(key, value);
+      } else if (value && typeof value === 'object') {
+        fd.append(key, JSON.stringify(value));
+      } else {
+        fd.append(key, String(data[key]));
+      }
     }
   }
-  return formData;
+  return fd;
 };
 
 export const utils = {

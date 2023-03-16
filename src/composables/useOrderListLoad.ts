@@ -55,7 +55,8 @@ export function useOrderListLoad(
   };
 
   const onLoad = async () => {
-    const { items = [], maxPage } = await fetchData();
+    const res = await fetchData();
+    const { items = [], maxPage } = res.data;
     loading.value = false;
     data.value.push(...items);
     if (pagination.pageNo < maxPage) {

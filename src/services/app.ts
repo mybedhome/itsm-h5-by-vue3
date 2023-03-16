@@ -1,4 +1,4 @@
-import type { LoginInfo } from '@/stores/loginInfo';
+import type { LoginInfo } from '@/types/common';
 import { http } from '@/utils/request';
 
 interface UpdateTokenData {

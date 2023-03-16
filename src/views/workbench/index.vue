@@ -117,8 +117,10 @@ const badgeProps = ref({
 const count = ref(0);
 
 (async () => {
-  const total = await getTotoItemTotal();
-  count.value = total;
+  const { data, error } = await getTotoItemTotal();
+  console.log('error', error);
+  console.log('data', data);
+  count.value = data;
 })();
 
 const isFocus = ref(false);

@@ -126,7 +126,7 @@ const onActionSheetOpen = () => {
 };
 
 const restoreState = () => {
-  if (!utils.isEmptyPlainObject(lastSaveModel)) {
+  if (!utils.isEmptyObject(lastSaveModel)) {
     model.value = { ...lastSaveModel };
     selected.value = [...lastSaveSelected];
   }

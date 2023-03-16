@@ -11,8 +11,8 @@ export const getOrders = (params: GetOrderQueryParams) => {
   return http.post<GetOrderQueryData>('/orders/_query', params);
 };
 
-export const getEngineUsers = () => {
-  return http.get<GetEngineUsersData>('/orders/engineUsers');
+export const getEngineUsers = <T = GetEngineUsersData>() => {
+  return http.get<T>('/orders/engineUsers2');
 };
 
 export const getTotoItemTotal = () => {

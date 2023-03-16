@@ -6,7 +6,7 @@ import { utils } from '@/utils';
 export const useRequestStore = defineStore('request', () => {
   const request = ref<{ [propName: string]: AbortController }>({});
   const getRequestIdentifier = (config: AxiosRequestConfig) => {
-    const data = utils.formDataToObject(config.data);
+    const data = utils.formDataToJson(config.data);
     return (
       (config.url as string) +
       (config.params ? '-' + JSON.stringify(config.params) : '') +
