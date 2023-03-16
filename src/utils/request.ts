@@ -101,25 +101,12 @@ request.interceptors.response.use(
 /** 封装增删改查方法 */
 type WrapperApiResult<T> = { data: T; error: ApiErrorResult | null };
 class Http {
-  capture<T>(request: Promise<T>): Promise<WrapperApiResult<T>> {
-    return new Promise((resolve) => {
-      request
-        .then((data) => {
-          resolve({ data, error: null });
-        })
-        .catch((error: ApiErrorResult) => {
-          console.log('catch error', error);
-          const err = { data: null, error } as WrapperApiResult<T>;
-          resolve(err);
-        });
-      // let data;
-      // try {
-      //   data = await request;
-      //   return { data, error: null };
-      // } catch (error) {
-      //   return { data, error } as { data: T; error: ApiErrorResult };
-      // }
-    });
+  async capture<T>(request: Promise<T>): Promise<WrapperApiResult<T>> {
+    try {
+      return { data: await request, error: null };
+    } catch (error) {
+      return { data: null, error } as { data: T; error: ApiErrorResult };
+    }
   }
 
   async get<T>(
