@@ -79,7 +79,7 @@ export function useOrderFilter(props: any) {
       pageNo: 1,
     });
     columns.value[0].data = services.data.items;
-    const { data } = await getEngineUsers();
+    const { data = [] } = await getEngineUsers();
     columns.value[2].data = data;
   };
   initRequest();

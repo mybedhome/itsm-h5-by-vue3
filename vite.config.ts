@@ -5,12 +5,11 @@ import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { babel } from '@rollup/plugin-babel';
 import PxToViewport from 'postcss-px-to-viewport-8-plugin';
+import Components from 'unplugin-vue-components/vite';
+import { VantResolver } from 'unplugin-vue-components/resolvers';
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  // esbuild: {
-  //   jsxFactory: 'h',
-  //   jsxFragment: 'Fragment',
-  // },
   plugins: [
     babel({
       plugins: [
@@ -26,6 +25,9 @@ export default defineConfig({
     }),
     vue(),
     vueJsx(),
+    Components({
+      resolvers: [VantResolver()],
+    }),
   ],
   resolve: {
     alias: {

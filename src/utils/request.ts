@@ -2,7 +2,8 @@ import axios, {
   type AxiosRequestConfig,
   type RawAxiosRequestHeaders,
   type AxiosResponse,
-  type AxiosInstance,
+  type AxiosError,
+  AxiosHeaders,
 } from 'axios';
 import { utils } from '@/utils';
 import { useRequestStore } from '@/stores/request';
@@ -28,6 +29,12 @@ type CustomAxiosHeaders = RawAxiosRequestHeaders & {
   Authorization: string | null;
 };
 
+const removeRequestStore = (config: AxiosRequestConfig) => {
+  const { removeRequest } = useRequestStore();
+  // 请求完成从store里移除
+  removeRequest(config);
+};
+
 const request = axios.create({
   baseURL: window.g.VUE_APP_BASE_API + '/api',
   withCredentials: true,
@@ -35,34 +42,39 @@ const request = axios.create({
 });
 
 /** 错误处理 */
-const handleError = (error: any) => {
-  if (error.__CANCEL__ || (error.config && error.config?.signal?.aborted)) {
+const handleError = (
+  error: Required<AxiosError<ApiErrorResult>> & { __CANCEL__: boolean }
+) => {
+  if (error.__CANCEL__ || utils.find(error, 'config', 'signal', 'aborted')) {
     return Promise.reject({
-      message: error.config.signal.reason,
+      message: utils.find(error, 'config', 'signal', 'reason'),
       name: error.name,
       data: null,
       url: error.config.url,
     });
   }
   if (error.response) {
-    const { status, data } = error.response;
+    const { status, data, config } = error.response;
     const code = HttpStatusCode[status] as keyof typeof HttpStatusText;
-    const errorResult: ApiErrorResult = {
+    const errorResult: ApiErrorResult & { response: AxiosResponse } = {
       name: error.name,
       message: data?.message || HttpStatusText[code],
       data,
-      url: error.config.url,
+      url: error.config.url as string,
+      response: error.response,
     };
 
     if (status === HttpStatusCode.UNAUTHORIZED) {
-      if (!sessionStorage.getItem('redirect')) {
-        window.location.href = data?.data?.url;
-      }
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = data?.data?.url;
     } else if (status === HttpStatusCode.FORBIDDEN) {
       // 5秒后重定向到统一认证
-      utils.delay(5000).then(() => (window.location.href = data?.url));
+      utils
+        .delay(5000)
+        .then(() => (window.location.href = data?.url || data?.data?.url));
     }
-    console.log('errorResult', errorResult);
+    removeRequestStore(config);
     return Promise.reject(errorResult);
   }
 };
@@ -81,7 +93,7 @@ request.interceptors.request.use((config) => {
     const { addRequest } = useRequestStore();
     addRequest(config);
   } catch (error) {
-    console.log('error', error);
+    console.error('request error: ', error);
   }
   return config;
 });
@@ -89,23 +101,40 @@ request.interceptors.request.use((config) => {
 /** 响应拦截器 */
 request.interceptors.response.use(
   (response: AxiosResponse<ApiSuccessResult>) => {
-    console.log('response.data.data', response.data.data);
-    const { removeRequest } = useRequestStore();
-    // 请求完成从store里移除
-    removeRequest(response.config);
-    return response.data.data;
+    removeRequestStore(response.config);
+    return response;
   },
   handleError
 );
 
 /** 封装增删改查方法 */
-type WrapperApiResult<T> = { data: T; error: ApiErrorResult | null };
+type WrapperApiResult<T = object> = {
+  data: T;
+  error: ApiErrorResult | null;
+  requestHeaders: AxiosHeaders;
+  responseHeaders: AxiosHeaders;
+};
+
 class Http {
   async capture<T>(request: Promise<T>): Promise<WrapperApiResult<T>> {
     try {
-      return { data: await request, error: null };
+      const response = (await request) as Awaited<AxiosResponse>;
+      return {
+        data: response.data.data,
+        error: null,
+        requestHeaders: response.config.headers as AxiosHeaders,
+        responseHeaders: response.headers as AxiosHeaders,
+      };
     } catch (error) {
-      return { data: null, error } as { data: T; error: ApiErrorResult };
+      const { response, ...errorData } = error as {
+        response: AxiosResponse;
+      } & ApiErrorResult;
+      return {
+        data: undefined,
+        error: errorData,
+        requestHeaders: response.config.headers as AxiosHeaders,
+        responseHeaders: response.headers as AxiosHeaders,
+      } as WrapperApiResult<any>;
     }
   }
 

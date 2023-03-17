@@ -10,6 +10,7 @@ export async function authorize() {
     login({
       url: sessionStorage.getItem('url') || location.href,
     }).then((res) => {
+      console.log('login res', res);
       if (res) {
         sessionStorage.removeItem('url');
         localStorage.setItem('loginInfo', JSON.stringify(res));

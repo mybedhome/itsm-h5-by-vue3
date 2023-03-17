@@ -3,32 +3,11 @@ import { createPinia } from 'pinia';
 
 import Root from './App.vue';
 import router from './router';
-import {
-  ConfigProvider,
-  Button,
-  Tabbar,
-  TabbarItem,
-  Search,
-  Grid,
-  GridItem,
-  Icon,
-  Popup,
-  Calendar,
-  ActionSheet,
-  Form,
-  Field,
-  Picker,
-  List,
-  Cell,
-} from 'vant';
 import './assets/base.css';
-import 'vant/lib/index.css';
 import '@vant/touch-emulator';
 import type { VueModuleNamespace } from './types/VueModuleNamespace';
 import { login } from './services/app';
-import { utils } from '@/utils/index';
 import type { App } from 'vue';
-import { http } from './utils/request';
 
 const registerGlobalComponent = (app: App<Element>) => {
   const components = import.meta.glob('./components/**/*.vue', {
@@ -45,46 +24,31 @@ const registerGlobalComponent = (app: App<Element>) => {
 const app = createApp(Root);
 app.use(createPinia());
 const mount = () => {
-  app.use(router);
-
-  app
-    .use(ConfigProvider)
-    .use(Popup)
-    .use(Calendar)
-    .use(ActionSheet)
-    .use(Form)
-    .use(Field)
-    .use(Picker)
-    .use(Button)
-    .use(Icon)
-    .use(Tabbar)
-    .use(TabbarItem)
-    .use(Search)
-    .use(List)
-    .use(Cell)
-    .use(Grid)
-    .use(GridItem);
   registerGlobalComponent(app);
+  app.use(router);
   app.mount('#app');
 };
 
-const authorize = () => {
+(async () => {
   const query = window.location.search;
-  if (query.includes('code') && query.includes('state')) {
-    sessionStorage.setItem('redirect', location.href);
-    window.location.href = window.location.href.replace(query, '');
-  } else {
-    login({
-      url: sessionStorage.getItem('redirect') || location.href,
-    }).then((res) => {
-      if (!res.error) {
-        sessionStorage.removeItem('redirect');
-        localStorage.setItem('loginInfo', JSON.stringify(res));
-        localStorage.setItem('tokenInfo', res.data.token);
-        mount();
-      }
-    });
-  }
-};
 
-authorize();
+  if (query.includes('code') && query.includes('state')) {
+    localStorage.setItem(location.origin, location.href);
+    window.location.href = location.href.replace(query, '');
+  } else {
+    // 由于每个项目的后端返回的接口数据结构可能不一致，这个地方可能需要稍作修改
+    const { error, data, responseHeaders } = await login({
+      url: localStorage.getItem(location.origin) || location.href,
+    });
+
+    if (!error) {
+      localStorage.removeItem(location.origin);
+      localStorage.setItem('loginInfo', JSON.stringify(data));
+      localStorage.setItem(
+        'tokenInfo',
+        responseHeaders.get('fulltoken') as string
+      );
+      mount();
+    }
+  }
+})();
