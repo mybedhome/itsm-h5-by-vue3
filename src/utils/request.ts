@@ -17,6 +17,8 @@ export type ApiErrorResult = {
 export type ApiSuccessResult<T = any> = {
   statusCode: number;
   success: boolean;
+  code?: number;
+  msg?: string;
   data: T;
 };
 
