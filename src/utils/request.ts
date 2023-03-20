@@ -116,9 +116,11 @@ type WrapperApiResult<T = object> = {
 };
 
 class Http {
-  async capture<T>(request: Promise<T>): Promise<WrapperApiResult<T>> {
+  async capture<T>(
+    request: Promise<AxiosResponse<ApiSuccessResult<T>>>
+  ): Promise<WrapperApiResult<T>> {
     try {
-      const response = (await request) as Awaited<AxiosResponse>;
+      const response = await request;
       return {
         data: response.data.data,
         error: null,

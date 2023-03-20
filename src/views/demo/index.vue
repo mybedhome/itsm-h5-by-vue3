@@ -1,6 +1,4 @@
 <script lang="jsx">
-import Canvas from '@antv/f2-vue';
-import { Chart, Interval, Axis, ScrollBar, Tooltip } from '@antv/f2';
 import EchartDemo from './echart.vue';
 import { toRaw } from 'vue';
 export default {
@@ -21,17 +19,6 @@ export default {
     const { chartData } = this;
     return (
       <div class="container">
-        <div class="f2">
-          <Canvas pixelRatio={window.devicePixelRatio}>
-            <Chart data={toRaw(chartData)}>
-              <Axis field="date" type="timeCat" tickCount={5} />
-              <Axis field="steps" formatter={this.formatNumber} />
-              <Interval x="date" y="steps" />
-              <ScrollBar mode="x" range={[0.1, 0.3]} />
-              <Tooltip />
-            </Chart>
-          </Canvas>
-        </div>
         <div class="echart">
           <EchartDemo data={toRaw(chartData)} />
         </div>

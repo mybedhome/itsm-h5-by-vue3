@@ -122,11 +122,11 @@ let barChart: ECharts | null = null;
 const orderData = ref<OrderStatisticsData | null>(null);
 const serviceData = ref<ServiceStatisticsData>();
 const fetchOrderData = async () => {
-  orderData.value = (await getOrderStatistics(orderParams.value))[0];
+  orderData.value = (await getOrderStatistics(orderParams.value)).data[0];
   renderOrderChart();
 };
 const fetchServiceData = async () => {
-  serviceData.value = await getServiceStatistics(serviceParams.value);
+  serviceData.value = (await getServiceStatistics(serviceParams.value)).data;
   renderServiceChart();
 };
 
