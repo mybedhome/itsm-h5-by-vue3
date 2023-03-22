@@ -38,12 +38,15 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watchEffect, watch, reactive } from 'vue';
-import * as echarts from 'echarts/core';
-import { PieChart, BarChart } from 'echarts/charts';
-import { GridComponent } from 'echarts/components';
-import { LabelLayout } from 'echarts/features';
-import { CanvasRenderer } from 'echarts/renderers';
-import type { ECharts } from 'echarts/core';
+// import * as echarts from 'echarts/core';
+// import { PieChart, BarChart } from 'echarts/charts';
+// import { GridComponent } from 'echarts/components';
+// import { LabelLayout } from 'echarts/features';
+// import { CanvasRenderer } from 'echarts/renderers';
+// import type { ECharts } from 'echarts/core';
+
+import echarts from '@/echarts';
+import type { ECharts, EChartsOption } from '@/echarts';
 import {
   getOrderStatistics,
   getServiceStatistics,
@@ -54,7 +57,7 @@ import type {
   ServiceStatisticsData,
 } from '@/services/model/statisticsModel';
 
-echarts.use([PieChart, BarChart, CanvasRenderer, LabelLayout, GridComponent]);
+// echarts.use([PieChart, BarChart, CanvasRenderer, LabelLayout, GridComponent]);
 
 let defaultDate = reactive([
   dayjs().subtract(1, 'month').toDate(),
@@ -139,10 +142,11 @@ const renderOrderChart = () => {
   const color = ['#38c082', '#4b6eef', '#ffaa18'];
   const chartData = orderData.value as OrderStatisticsData;
   if (pieRef.value) {
-    if (!pieChart) {
-      pieChart = echarts.init(pieRef.value);
-    }
-    const option = {
+    const option: EChartsOption = {
+      legend: {
+        top: '5%',
+        left: 'center',
+      },
       series: [
         {
           name: '工单状态统计',
@@ -164,7 +168,10 @@ const renderOrderChart = () => {
         },
       ],
     };
-    pieChart.setOption(option);
+    if (!pieChart) {
+      pieChart = echarts.init(pieRef.value);
+    }
+    (pieChart as ECharts).setOption(option);
   }
 };
 
@@ -212,7 +219,7 @@ const renderServiceChart = () => {
         },
       ],
     };
-    barChart.setOption(option);
+    (barChart as ECharts).setOption(option);
   }
 };
 

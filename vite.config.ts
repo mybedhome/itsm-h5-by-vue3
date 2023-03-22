@@ -62,4 +62,13 @@ export default defineConfig({
       host: 'localhost',
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          echarts: ['echarts'],
+        },
+      },
+    },
+  },
 });

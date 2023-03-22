@@ -1,8 +1,10 @@
 // @ts-ignore
-import echart from 'echarts/lib/echarts';
-// @ts-ignore
-import Pie from 'echarts/lib/chart/pie';
+import * as echarts from 'echarts/lib/echarts';
+import './Pie';
+import './Bar';
 
-export default {
-  Pie,
-};
+import 'echarts/lib/component/grid';
+import 'echarts/lib/component/legend';
+export type { ECharts } from 'echarts/core';
+export type { EChartsOption } from 'echarts/index';
+export default echarts;
