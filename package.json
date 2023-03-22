@@ -13,8 +13,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@antv/f2": "^4.0.41",
-    "@antv/f2-vue": "^4.0.22",
+    "@types/echarts": "^4.9.16",
     "@vant/touch-emulator": "^1.4.0",
     "axios": "^1.2.2",
     "dayjs": "^1.11.7",

@@ -12,7 +12,6 @@
 import { ref, computed, onMounted } from 'vue';
 import Workbench from './workbench/index.vue';
 import Statistics from './statistics/index.vue';
-import Cookies from 'js-cookie';
 const active = ref(0);
 const activeView = computed(() => {
   return active.value === 0 ? Workbench : Statistics;
