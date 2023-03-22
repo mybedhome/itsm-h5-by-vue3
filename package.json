@@ -15,7 +15,6 @@
   "dependencies": {
     "@antv/f2": "^4.0.41",
     "@antv/f2-vue": "^4.0.22",
-    "@types/echarts": "^4.9.16",
     "@vant/touch-emulator": "^1.4.0",
     "axios": "^1.2.2",
     "dayjs": "^1.11.7",
@@ -33,6 +32,7 @@
     "@faker-js/faker": "^7.6.0",
     "@rollup/plugin-babel": "^6.0.3",
     "@rushstack/eslint-patch": "^1.1.4",
+    "@types/echarts": "^4.9.16",
     "@types/js-cookie": "^3.0.3",
     "@types/node": "^18.15.0",
     "@types/throttle-debounce": "^5.0.0",
