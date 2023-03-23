@@ -12,12 +12,14 @@
 import { ref, computed, onMounted } from 'vue';
 import Workbench from './workbench/index.vue';
 import Statistics from './statistics/index.vue';
+import { useRoute } from 'vue-router';
 const active = ref(0);
 const activeView = computed(() => {
   return active.value === 0 ? Workbench : Statistics;
 });
 
-onMounted(() => {});
+const query = useRoute().query;
+console.log('query', query);
 </script>
 <script lang="ts">
 export default { name: 'HomeView' };

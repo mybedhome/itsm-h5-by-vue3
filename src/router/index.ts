@@ -13,6 +13,7 @@ export enum RouteName {
   ORDERSDETAIL = 'orders-detail',
   ORDERTODO = 'orders-todo',
   ORDERDRAFT = 'orders-draft',
+  OAUTH = 'oauth',
   NOTFOUND = 'not-found',
   NOPERMISSIONS = 'no-permissions',
 }
@@ -75,28 +76,33 @@ const router = createRouter({
       component: () => import('@/views/demo/index.vue'),
     },
     {
+      path: '/oauth',
+      name: RouteName.OAUTH,
+      component: () => import('@/views/oauth/oauth.vue'),
+      meta: { auth: false },
+    },
+    {
       path: '/no-permissions',
       name: RouteName.NOPERMISSIONS,
       component: () => import('@/views/error/NoPermissions.vue'),
+      meta: { auth: false },
     },
     {
       path: '/:pathMatch*',
       name: RouteName.NOTFOUND,
       component: () => import('@/views/error/NotFound.vue'),
+      meta: { auth: false },
     },
   ],
 });
 
 router.beforeEach((to) => {
+  console.log('to', to);
   useRequestStore().clearPendingRequest();
   const { permissions } = usePermissionsStore();
   const name = to.name as string;
 
-  if (
-    name !== RouteName.NOPERMISSIONS &&
-    name !== RouteName.NOTFOUND &&
-    !permissions.includes(name)
-  ) {
+  if (to.meta.auth !== false && !permissions.includes(name)) {
     return { name: RouteName.NOPERMISSIONS };
   }
 });
