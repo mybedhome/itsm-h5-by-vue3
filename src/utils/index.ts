@@ -78,7 +78,7 @@ const guid = (hasHyphen?: boolean) => {
 };
 
 // 查找对象属性的值，支持路径嵌套查询
-export const find = (obj: Record<string, unknown>, ...paths: any[]) => {
+const find = (obj: Record<string, unknown>, ...paths: any[]) => {
   return paths.reduce((acc, path) => {
     return acc?.[path];
   }, obj);
@@ -115,7 +115,7 @@ const formDataToJson = (fd: FormData) => {
 };
 
 // 将json转换为FormData
-export const jsonToFormData = (data: Record<string, unknown>) => {
+const jsonToFormData = (data: Record<string, unknown>) => {
   const fd = new FormData();
   if (!isEmptyObject(data)) {
     for (const key of Object.keys(data)) {
@@ -130,6 +130,28 @@ export const jsonToFormData = (data: Record<string, unknown>) => {
     }
   }
   return fd;
+};
+
+const platform = () => {
+  const ua = navigator.userAgent;
+  const isWindowsPhone = / (?:Windows Phone)/.test(ua);
+  const isSymbian = / (?:Symbian0S)/.test(ua) || isWindowsPhone;
+  const isAndroid = / (?:Android)/.test(ua);
+  const isFireFox = /(?:Firefox)/.test(ua);
+  const isTablet =
+    /(?:iPad|PlayBook)/.test(ua) ||
+    (isAndroid && !/ (?:Mobile)/.test(ua)) ||
+    (isFireFox && / (?:Tablet)/.test(ua));
+  const isPhone = / (?:iPhone)/.test(ua) && !isTablet;
+  const isMobile = isPhone || isAndroid || isSymbian || isTablet;
+  const isPc = !isMobile;
+  return {
+    isMobile,
+    isPc,
+    isAndroid,
+    isPhone,
+    isTablet,
+  };
 };
 
 export const utils = {
@@ -167,4 +189,5 @@ export const utils = {
   guid,
   px2vw,
   find,
+  platform,
 };

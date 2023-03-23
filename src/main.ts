@@ -8,6 +8,7 @@ import '@vant/touch-emulator';
 import type { VueModuleNamespace } from './types/VueModuleNamespace';
 import { login } from './services/app';
 import type { App } from 'vue';
+import { usePermissionsStore } from './stores/permissions';
 
 const registerGlobalComponent = (app: App<Element>) => {
   const components = import.meta.glob('./components/**/*.vue', {
@@ -48,6 +49,7 @@ const mount = () => {
         'tokenInfo',
         responseHeaders.get('fulltoken') as string
       );
+      usePermissionsStore().setPermissions(data.rolePermissions);
       mount();
     }
   }

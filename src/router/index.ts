@@ -1,22 +1,26 @@
+import { usePermissionsStore } from '@/stores/permissions';
 import { useRequestStore } from '@/stores/request';
 import { createRouter, createWebHashHistory, type RouteMeta } from 'vue-router';
 
+// 路由名称与权限名称必须一致
 export enum RouteName {
   HOME = 'home',
   BES = 'bes',
-  WORKBENCH = 'workbentch',
+  WORKBENCH = 'itsm-workbench-orderManage',
   STATISTICS = 'statistics',
   ORDERS = 'orders',
-  ORDERSADD = 'orders-add',
+  ORDERSADD = 'itsm-workbench-orderManage-all-create',
   ORDERSDETAIL = 'orders-detail',
   ORDERTODO = 'orders-todo',
   ORDERDRAFT = 'orders-draft',
   NOTFOUND = 'not-found',
   NOPERMISSIONS = 'no-permissions',
 }
+
 export type CustomRouteMeta = RouteMeta & {
   transitionName: string;
 };
+
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
@@ -63,17 +67,17 @@ const router = createRouter({
             },
           ],
         },
-        {
-          path: 'no-permissions',
-          name: RouteName.NOPERMISSIONS,
-          component: () => import('@/views/error/NoPermissions.vue'),
-        },
       ],
     },
     {
       path: '/demo',
       name: 'demo',
       component: () => import('@/views/demo/index.vue'),
+    },
+    {
+      path: '/no-permissions',
+      name: RouteName.NOPERMISSIONS,
+      component: () => import('@/views/error/NoPermissions.vue'),
     },
     {
       path: '/:pathMatch*',
@@ -83,19 +87,18 @@ const router = createRouter({
   ],
 });
 
-// 路由跳转前取消所有未完成的请求
-// router.beforeEach(() => {
-//   const { clearPendingRequest, request } = useRequestStore();
-//   console.log('cancel', request);
+router.beforeEach((to) => {
+  useRequestStore().clearPendingRequest();
+  const { permissions } = usePermissionsStore();
+  const name = to.name as string;
 
-//   // clearPendingRequest();
-// });
-
-router.afterEach((to, from) => {
-  const toDepth = to.path.split('/').length;
-  const fromDepth = from.path.split('/').length;
-  to.meta.transitionName =
-    toDepth < fromDepth ? 'van-slide-right' : 'van-slide-left';
+  if (
+    name !== RouteName.NOPERMISSIONS &&
+    name !== RouteName.NOTFOUND &&
+    !permissions.includes(name)
+  ) {
+    return { name: RouteName.NOPERMISSIONS };
+  }
 });
 
 export default router;
