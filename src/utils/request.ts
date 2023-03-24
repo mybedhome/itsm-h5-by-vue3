@@ -36,7 +36,7 @@ const removeRequestStore = (config: AxiosRequestConfig) => {
 };
 
 const request = axios.create({
-  baseURL: window.g.VUE_APP_BASE_API + '/api',
+  baseURL: window.g.VUE_APP_BASE_API,
   withCredentials: true,
   timeout: 60 * 1000,
 });
