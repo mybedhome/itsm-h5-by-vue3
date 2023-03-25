@@ -19,11 +19,11 @@ const OAUTH_PC_URL = window.g.OAUTH_PC_URL.replace(/\/$/, '');
 const prefix = `${window.g.UM_URL}?clientId=${window.g.CLIENT_ID}&redirectUrl=`;
 
 if (utils.platform().isMobile) {
-  location.href = `${prefix}${encodeURIComponent(
+  window.location.href = `${prefix}${encodeURIComponent(
     OAUTH_MOBILE_URL + mobileUrl + queryParams
   )}`;
 } else if (OAUTH_PC_URL) {
-  location.href = `${prefix}${encodeURIComponent(
+  window.location.href = `${prefix}${encodeURIComponent(
     OAUTH_PC_URL + webUrl + queryParams
   )}`;
 }
