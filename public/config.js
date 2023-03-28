@@ -1,5 +1,5 @@
 window.g = {
-  VUE_APP_BASE_API: '/',
+  VUE_APP_BASE_API: '/api',
   /** 下面是关于钉钉或微信免登陆集成的配置 */
   // 统一认证服务器地址
   UM_URL: '',
