@@ -10,7 +10,6 @@ import type { OrderQueryCondition } from '@/services/model/orderModel';
 import type { OrderFilterConfirmEventParams } from '@/views/components/OrderFilter';
 
 export function useOrderFilter(props: any) {
-  console.log('props', props);
   const isDraftRoute = useRoute().name === RouteName.ORDERDRAFT;
   const columns = ref<Column[]>([
     { label: '服务', key: OrderFilterKey.SERVICE, data: [] },
