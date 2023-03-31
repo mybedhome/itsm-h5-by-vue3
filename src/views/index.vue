@@ -9,10 +9,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import Workbench from './workbench/index.vue';
 import Statistics from './statistics/index.vue';
-import { useRoute, type LocationQuery } from 'vue-router';
+import { useRoute } from 'vue-router';
 const active = ref(0);
 const activeView = computed(() => {
   return active.value === 0 ? Workbench : Statistics;

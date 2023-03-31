@@ -5,28 +5,28 @@
 // Read more: https://github.com/vuejs/core/pull/3399
 import '@vue/runtime-core'
 
-export {}
+export {};
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    RouterLink: typeof import('vue-router')['RouterLink']
-    RouterView: typeof import('vue-router')['RouterView']
-    TheSearch: typeof import('./src/components/TheSearch.vue')['default']
-    TheTabbar: typeof import('./src/components/TheTabbar.vue')['default']
-    VanActionSheet: typeof import('vant/es')['ActionSheet']
-    VanButton: typeof import('vant/es')['Button']
-    VanCalendar: typeof import('vant/es')['Calendar']
-    VanConfigProvider: typeof import('vant/es')['ConfigProvider']
-    VanField: typeof import('vant/es')['Field']
-    VanForm: typeof import('vant/es')['Form']
-    VanGrid: typeof import('vant/es')['Grid']
-    VanGridItem: typeof import('vant/es')['GridItem']
-    VanIcon: typeof import('vant/es')['Icon']
-    VanList: typeof import('vant/es')['List']
-    VanPicker: typeof import('vant/es')['Picker']
-    VanPopup: typeof import('vant/es')['Popup']
-    VanSearch: typeof import('vant/es')['Search']
-    VanTabbar: typeof import('vant/es')['Tabbar']
-    VanTabbarItem: typeof import('vant/es')['TabbarItem']
+    RouterLink: typeof import('vue-router')['RouterLink'];
+    RouterView: typeof import('vue-router')['RouterView'];
+    TheSearch: typeof import('./src/components/TheSearch.vue')['default'];
+    TheTabbar: typeof import('./src/components/TheTabbar.vue')['default'];
+    VanActionSheet: typeof import('vant/es')['ActionSheet'];
+    VanButton: typeof import('vant/es')['Button'];
+    VanCalendar: typeof import('vant/es')['Calendar'];
+    VanConfigProvider: typeof import('vant/es')['ConfigProvider'];
+    VanField: typeof import('vant/es')['Field'];
+    VanForm: typeof import('vant/es')['Form'];
+    VanGrid: typeof import('vant/es')['Grid'];
+    VanGridItem: typeof import('vant/es')['GridItem'];
+    VanIcon: typeof import('vant/es')['Icon'];
+    VanList: typeof import('vant/es')['List'];
+    VanPicker: typeof import('vant/es')['Picker'];
+    VanPopup: typeof import('vant/es')['Popup'];
+    VanSearch: typeof import('vant/es')['Search'];
+    VanTabbar: typeof import('vant/es')['Tabbar'];
+    VanTabbarItem: typeof import('vant/es')['TabbarItem'];
   }
 }

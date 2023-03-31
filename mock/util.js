@@ -1,6 +1,6 @@
 module.exports = {
   res: (res) => {
-    res.json()
+    res.json();
   },
   delay: (timeout = 3000) => {
     return new Promise((resolve) => {
