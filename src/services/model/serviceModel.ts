@@ -1,14 +1,14 @@
 export interface GetServicesParam {
-  condition: { state: number };
-  pageNo: number;
-  pageSize: number;
+  condition: { state: number }
+  pageNo: number
+  pageSize: number
 }
 
 export interface ServiceItem {
-  serviceName: string;
-  serviceId: string;
+  serviceName: string
+  serviceId: string
 }
 export type GetServicesData = {
-  items: ServiceItem[];
-  total: number;
-};
+  items: ServiceItem[]
+  total: number
+}

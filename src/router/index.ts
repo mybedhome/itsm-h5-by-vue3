@@ -1,6 +1,6 @@
-import { usePermissionsStore } from '@/stores/permissions';
-import { useRequestStore } from '@/stores/request';
-import { createRouter, createWebHashHistory, type RouteMeta } from 'vue-router';
+import { usePermissionsStore } from '@/stores/permissions'
+import { useRequestStore } from '@/stores/request'
+import { createRouter, createWebHashHistory, type RouteMeta } from 'vue-router'
 
 // 路由名称与权限名称必须一致
 export enum RouteName {
@@ -19,8 +19,8 @@ export enum RouteName {
 }
 
 export type CustomRouteMeta = RouteMeta & {
-  transitionName: string;
-};
+  transitionName: string
+}
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -94,17 +94,17 @@ const router = createRouter({
       meta: { auth: false },
     },
   ],
-});
+})
 
 router.beforeEach((to) => {
-  console.log('to', to);
-  useRequestStore().clearPendingRequest();
-  const { permissions } = usePermissionsStore();
-  const name = to.name as string;
+  console.log('to', to)
+  useRequestStore().clearPendingRequest()
+  const { permissions } = usePermissionsStore()
+  const name = to.name as string
 
   if (to.meta.auth !== false && !permissions.includes(name)) {
-    return { name: RouteName.NOPERMISSIONS };
+    return { name: RouteName.NOPERMISSIONS }
   }
-});
+})
 
-export default router;
+export default router

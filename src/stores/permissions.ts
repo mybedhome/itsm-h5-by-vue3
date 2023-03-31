@@ -1,12 +1,12 @@
-import { defineStore } from 'pinia';
-import { reactive } from 'vue';
+import { defineStore } from 'pinia'
+import { reactive } from 'vue'
 export const usePermissionsStore = defineStore('permissions', () => {
-  const permissions = reactive<string[]>([]);
+  const permissions = reactive<string[]>([])
   function setPermissions(data: string[]) {
-    permissions.push(...data);
+    permissions.push(...data)
   }
   function hasPermission(permission: string) {
-    return permissions.includes(permission);
+    return permissions.includes(permission)
   }
-  return { permissions, setPermissions, hasPermission };
-});
+  return { permissions, setPermissions, hasPermission }
+})

@@ -63,31 +63,31 @@
 </template>
 
 <script lang="ts">
-export default { name: 'WorkbenchView' };
+export default { name: 'WorkbenchView' }
 </script>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onActivated } from 'vue';
-import OrderList from '../components/OrderList.vue';
-import OrderFilter from '../components/OrderFilter.vue';
-import createIcon from '@/assets/create.svg';
-import todoIcon from '@/assets/todo.svg';
-import draftIcon from '@/assets/draft.svg';
-import { useOrderFilter } from '@/composables/useOrderFilter';
-import type { OrderFilterConfirmEventParams } from '../components/OrderFilter';
-import { useDebouncedRef } from '@/composables/useDebouncedRef';
-import { useOrderListLoad } from '@/composables/useOrderListLoad';
-import { getTotoItemTotal } from '@/services/orders';
-import { RouteName } from '@/router';
-import { useRouter } from 'vue-router';
-import { throttle } from 'throttle-debounce';
+import { ref, computed, watch, onMounted, onActivated } from 'vue'
+import OrderList from '../components/OrderList.vue'
+import OrderFilter from '../components/OrderFilter.vue'
+import createIcon from '@/assets/create.svg'
+import todoIcon from '@/assets/todo.svg'
+import draftIcon from '@/assets/draft.svg'
+import { useOrderFilter } from '@/composables/useOrderFilter'
+import type { OrderFilterConfirmEventParams } from '../components/OrderFilter'
+import { useDebouncedRef } from '@/composables/useDebouncedRef'
+import { useOrderListLoad } from '@/composables/useOrderListLoad'
+import { getTotoItemTotal } from '@/services/orders'
+import { RouteName } from '@/router'
+import { useRouter } from 'vue-router'
+import { throttle } from 'throttle-debounce'
 
-type OrderFilterInstance = typeof OrderFilter;
-type ActionButton = '筛选' | '取消';
+type OrderFilterInstance = typeof OrderFilter
+type ActionButton = '筛选' | '取消'
 
-const router = useRouter();
-const props = defineProps(['isTodoRoute', 'isDraftRoute']);
-const isWorkbenchRoute = !props.isDraftRoute && !props.isTodoRoute;
+const router = useRouter()
+const props = defineProps(['isTodoRoute', 'isDraftRoute'])
+const isWorkbenchRoute = !props.isDraftRoute && !props.isTodoRoute
 
 const menus = ref([
   {
@@ -105,103 +105,103 @@ const menus = ref([
     text: '草稿箱',
     name: RouteName.ORDERDRAFT,
   },
-]);
+])
 
 const handleJump = (name: RouteName) => {
-  router.push({ name });
-};
+  router.push({ name })
+}
 
 const badgeProps = ref({
   showZero: false,
-});
-const count = ref(0);
+})
+const count = ref(0)
 
-(async () => {
-  const { data, error } = await getTotoItemTotal();
-  console.log('error', error);
-  console.log('data', data);
-  count.value = data;
-})();
+;(async () => {
+  const { data, error } = await getTotoItemTotal()
+  console.log('error', error)
+  console.log('data', data)
+  count.value = data
+})()
 
-const isFocus = ref(false);
+const isFocus = ref(false)
 const isShowContentSection = computed(
   () => !isFocus.value || !!searchText.value
-);
+)
 
 const { columns, filterResult, condition } = useOrderFilter({
   ...props,
   isWorkbenchRoute,
-});
+})
 const { loading, finished, data, onLoad, isSearchMode } = useOrderListLoad(
   condition,
   props
-);
+)
 
-onLoad();
+onLoad()
 
-const searchText = useDebouncedRef('', 500);
+const searchText = useDebouncedRef('', 500)
 
 watch(searchText, () => {
-  condition.value.serialNum = searchText.value;
-});
+  condition.value.serialNum = searchText.value
+})
 
 const orderFilterRef = ref<OrderFilterInstance>(
   null as unknown as OrderFilterInstance
-);
+)
 const handleFilterClear = () => {
-  orderFilterRef.value?.clearState();
-  filterResult.value = [];
-};
+  orderFilterRef.value?.clearState()
+  filterResult.value = []
+}
 
-const hasFilterParams = computed(() => filterResult.value.length > 0);
+const hasFilterParams = computed(() => filterResult.value.length > 0)
 
 const onFocus = () => {
-  isFocus.value = true;
-  isSearchMode.value = true;
-};
+  isFocus.value = true
+  isSearchMode.value = true
+}
 
-const isShowOrderFilter = ref(false);
+const isShowOrderFilter = ref(false)
 
 const handleAction = async (action: ActionButton) => {
   if (action === '筛选') {
-    isShowOrderFilter.value = true;
+    isShowOrderFilter.value = true
   } else {
-    isSearchMode.value = false;
-    searchText.value = '';
-    isShowOrderFilter.value = false;
-    isFocus.value = false;
+    isSearchMode.value = false
+    searchText.value = ''
+    isShowOrderFilter.value = false
+    isFocus.value = false
   }
-};
+}
 
 const onConfirm = (selected: OrderFilterConfirmEventParams) => {
-  isShowOrderFilter.value = false;
-  filterResult.value = selected;
-};
+  isShowOrderFilter.value = false
+  filterResult.value = selected
+}
 
 /**
  * 切换底部标签栏记住滚动位置
  */
-const contentRef = ref<HTMLElement | null>(null);
+const contentRef = ref<HTMLElement | null>(null)
 onMounted(() => {
   if (contentRef.value) {
     contentRef.value.addEventListener('scroll', debounceScroll, {
       passive: true,
-    });
+    })
   }
-});
+})
 
 onActivated(() => {
-  (contentRef.value as HTMLElement).scrollTop = prevScrollTop.value;
-});
+  ;(contentRef.value as HTMLElement).scrollTop = prevScrollTop.value
+})
 
-const prevScrollTop = ref(0);
+const prevScrollTop = ref(0)
 const debounceScroll = throttle(
   100,
   (e: Event) => {
-    prevScrollTop.value = (e.target as HTMLElement).scrollTop;
+    prevScrollTop.value = (e.target as HTMLElement).scrollTop
   },
   { noTrailing: true }
-);
+)
 </script>
 
 <style scoped lang="scss">

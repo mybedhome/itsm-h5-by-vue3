@@ -9,4 +9,4 @@ window.g = {
   OAUTH_MOBILE_URL: location.origin, // 二级路径地址 location.origin + '/itsm'
   // PC页面地址（可选），如果部署在非根路径要加上二级路径地址，如: http://192.168.0.1:8001/itsm
   OAUTH_PC_URL: '',
-};
+}

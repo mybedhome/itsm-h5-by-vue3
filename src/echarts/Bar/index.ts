@@ -1,1 +1,1 @@
-import 'echarts/lib/chart/bar';
+import 'echarts/lib/chart/bar'

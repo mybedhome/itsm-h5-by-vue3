@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { themeVars } from './constants/theme-vars';
+import { themeVars } from './constants/theme-vars'
 </script>
 
 <template>

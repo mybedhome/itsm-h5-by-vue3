@@ -1,16 +1,16 @@
-import { RouteName } from '@/router';
-import { computed, ref, watch } from 'vue';
-import { getServices } from '@/services/service';
-import { getEngineUsers } from '@/services/orders';
-import { OrderFilterKey, type Column } from '@/types/common';
-import dayjs from 'dayjs';
-import { ORDER_STATUS } from '@/constants';
-import { useRoute } from 'vue-router';
-import type { OrderQueryCondition } from '@/services/model/orderModel';
-import type { OrderFilterConfirmEventParams } from '@/views/components/OrderFilter';
+import { RouteName } from '@/router'
+import { computed, ref, watch } from 'vue'
+import { getServices } from '@/services/service'
+import { getEngineUsers } from '@/services/orders'
+import { OrderFilterKey, type Column } from '@/types/common'
+import dayjs from 'dayjs'
+import { ORDER_STATUS } from '@/constants'
+import { useRoute } from 'vue-router'
+import type { OrderQueryCondition } from '@/services/model/orderModel'
+import type { OrderFilterConfirmEventParams } from '@/views/components/OrderFilter'
 
 export function useOrderFilter(props: any) {
-  const isDraftRoute = useRoute().name === RouteName.ORDERDRAFT;
+  const isDraftRoute = useRoute().name === RouteName.ORDERDRAFT
   const columns = ref<Column[]>([
     { label: '服务', key: OrderFilterKey.SERVICE, data: [] },
     { label: '状态', key: OrderFilterKey.STATUS, data: ORDER_STATUS },
@@ -20,9 +20,9 @@ export function useOrderFilter(props: any) {
       key: OrderFilterKey.CREATE_TIME,
       data: [],
     },
-  ]);
+  ])
 
-  const defaultDate = [dayjs().subtract(1, 'month').toDate(), new Date()];
+  const defaultDate = [dayjs().subtract(1, 'month').toDate(), new Date()]
   // 默认过滤条件
   const filterResult = ref<OrderFilterConfirmEventParams>([
     {
@@ -32,22 +32,22 @@ export function useOrderFilter(props: any) {
       ).format('YYYY/MM/DD')}`,
       value: [defaultDate[0].getTime(), defaultDate[1].getTime()],
     },
-  ]);
+  ])
 
   const serviceFilterResult = computed(() => {
-    return filterResult.value.find((item) => item.label === '服务');
-  });
+    return filterResult.value.find((item) => item.label === '服务')
+  })
   const orderStatusFilterResult = computed(() => {
-    return filterResult.value.find((item) => item.label === '状态');
-  });
+    return filterResult.value.find((item) => item.label === '状态')
+  })
   const creatorFilterResult = computed(() => {
-    return filterResult.value.find((item) => item.label === '发起人');
-  });
+    return filterResult.value.find((item) => item.label === '发起人')
+  })
   const timeFilterResult = computed(() => {
     return filterResult.value.find((item) =>
       ['发起时间', '保存时间'].includes(item.label)
-    );
-  });
+    )
+  })
 
   watch(filterResult, () => {
     condition.value = {
@@ -58,8 +58,8 @@ export function useOrderFilter(props: any) {
         createUserId: creatorFilterResult.value?.value,
         createTimeRange: timeFilterResult.value?.value,
       },
-    };
-  });
+    }
+  })
 
   const condition = ref<OrderQueryCondition>({
     isAccSystem: 1,
@@ -69,33 +69,33 @@ export function useOrderFilter(props: any) {
     orderStatus: props.isTodoRoute ? 1 : '',
     createUserId: '',
     createTimeRange: [defaultDate[0].getTime(), defaultDate[1].getTime()],
-  });
+  })
 
   const initRequest = async () => {
     const services = await getServices({
       condition: { state: 1 },
       pageSize: 100000,
       pageNo: 1,
-    });
-    columns.value[0].data = services.data.items;
-    const { data = [] } = await getEngineUsers();
-    columns.value[2].data = data;
-  };
-  initRequest();
+    })
+    columns.value[0].data = services.data.items
+    const { data = [] } = await getEngineUsers()
+    columns.value[2].data = data
+  }
+  initRequest()
 
   const expose = {
     columns,
     filterResult,
     condition,
-  };
+  }
   if (isDraftRoute) {
     const filterColumn = columns.value.filter((column) =>
       [OrderFilterKey.SERVICE, OrderFilterKey.CREATE_TIME].includes(
         column.key as OrderFilterKey
       )
-    );
-    return { ...expose, columns: ref(filterColumn) };
+    )
+    return { ...expose, columns: ref(filterColumn) }
   } else {
-    return expose;
+    return expose
   }
 }

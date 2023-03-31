@@ -1,5 +1,5 @@
-import type { ComponentOptions } from 'vue';
+import type { ComponentOptions } from 'vue'
 export type VueModuleNamespace = {
-  [Symbol.toStringTag]: 'Module';
-  default: ComponentOptions;
-};
+  [Symbol.toStringTag]: 'Module'
+  default: ComponentOptions
+}

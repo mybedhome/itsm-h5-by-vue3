@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watchEffect, watch, reactive } from 'vue';
+import { ref, onMounted, computed, watchEffect, watch, reactive } from 'vue'
 // import * as echarts from 'echarts/core';
 // import { PieChart, BarChart } from 'echarts/charts';
 // import { GridComponent } from 'echarts/components';
@@ -45,102 +45,99 @@ import { ref, onMounted, computed, watchEffect, watch, reactive } from 'vue';
 // import { CanvasRenderer } from 'echarts/renderers';
 // import type { ECharts } from 'echarts/core';
 
-import echarts from '@/echarts';
-import type { ECharts, EChartsOption } from '@/echarts';
-import {
-  getOrderStatistics,
-  getServiceStatistics,
-} from '@/services/statistics';
-import dayjs from 'dayjs';
+import echarts from '@/echarts'
+import type { ECharts, EChartsOption } from '@/echarts'
+import { getOrderStatistics, getServiceStatistics } from '@/services/statistics'
+import dayjs from 'dayjs'
 import type {
   OrderStatisticsData,
   ServiceStatisticsData,
-} from '@/services/model/statisticsModel';
+} from '@/services/model/statisticsModel'
 
 // echarts.use([PieChart, BarChart, CanvasRenderer, LabelLayout, GridComponent]);
 
 let defaultDate = reactive([
   dayjs().subtract(1, 'month').toDate(),
   dayjs().toDate(),
-]);
-const minDate = dayjs().subtract(2, 'year').toDate();
-const showCalendar = ref(false);
-const calendarTarget = ref('');
+])
+const minDate = dayjs().subtract(2, 'year').toDate()
+const showCalendar = ref(false)
+const calendarTarget = ref('')
 const onConfirmDate = (dates: Date[]) => {
-  showCalendar.value = false;
+  showCalendar.value = false
   if (calendarTarget.value === 'order') {
-    orderSelectedDate.value = dates;
-    fetchOrderData();
+    orderSelectedDate.value = dates
+    fetchOrderData()
   } else {
-    serviceSelectedDate.value = dates;
-    fetchServiceData();
+    serviceSelectedDate.value = dates
+    fetchServiceData()
   }
-};
+}
 
 const handleShowCalendar = (type: string) => {
-  showCalendar.value = true;
-  calendarTarget.value = type;
-};
+  showCalendar.value = true
+  calendarTarget.value = type
+}
 
-const orderSelectedDate = ref([...defaultDate]);
-const serviceSelectedDate = ref([...defaultDate]);
+const orderSelectedDate = ref([...defaultDate])
+const serviceSelectedDate = ref([...defaultDate])
 
 const orderParams = computed(() => {
-  const v = orderSelectedDate.value;
+  const v = orderSelectedDate.value
   return {
     startDate: dayjs(v[0]).format('YYYY-MM-DD'),
     endDate: dayjs(v[1]).format('YYYY-MM-DD'),
-  };
-});
+  }
+})
 
 const serviceParams = computed(() => {
-  const v = serviceSelectedDate.value;
+  const v = serviceSelectedDate.value
   return {
     startDate: dayjs(v[0]).format('YYYY-MM-DD'),
     endDate: dayjs(v[1]).format('YYYY-MM-DD'),
-  };
-});
+  }
+})
 
 const orderStatusDateText = computed(
   () => `${orderParams.value.startDate} 至 ${orderParams.value.endDate}`
-);
+)
 
 const servicesDateText = computed(
   () => `${serviceParams.value.startDate} 至 ${serviceParams.value.endDate}`
-);
+)
 
 watch(calendarTarget, () => {
   if (calendarTarget.value === 'order') {
-    defaultDate = orderSelectedDate.value;
+    defaultDate = orderSelectedDate.value
   } else {
-    defaultDate = serviceSelectedDate.value;
+    defaultDate = serviceSelectedDate.value
   }
-});
+})
 
-const pieRef = ref<HTMLDivElement | null>(null);
-const barRef = ref<HTMLDivElement | null>(null);
-let pieChart: ECharts | null = null;
-let barChart: ECharts | null = null;
+const pieRef = ref<HTMLDivElement | null>(null)
+const barRef = ref<HTMLDivElement | null>(null)
+let pieChart: ECharts | null = null
+let barChart: ECharts | null = null
 
-const orderData = ref<OrderStatisticsData | null>(null);
-const serviceData = ref<ServiceStatisticsData>();
+const orderData = ref<OrderStatisticsData | null>(null)
+const serviceData = ref<ServiceStatisticsData>()
 const fetchOrderData = async () => {
-  orderData.value = (await getOrderStatistics(orderParams.value)).data[0];
-  renderOrderChart();
-};
+  orderData.value = (await getOrderStatistics(orderParams.value)).data[0]
+  renderOrderChart()
+}
 const fetchServiceData = async () => {
-  serviceData.value = (await getServiceStatistics(serviceParams.value)).data;
-  renderServiceChart();
-};
+  serviceData.value = (await getServiceStatistics(serviceParams.value)).data
+  renderServiceChart()
+}
 
 const renderOrderChart = () => {
   const orderMap = {
     finishNum: '已完成',
     procNum: '处理中',
     revNum: '已撤销',
-  };
-  const color = ['#38c082', '#4b6eef', '#ffaa18'];
-  const chartData = orderData.value as OrderStatisticsData;
+  }
+  const color = ['#38c082', '#4b6eef', '#ffaa18']
+  const chartData = orderData.value as OrderStatisticsData
   if (pieRef.value) {
     const option: EChartsOption = {
       legend: {
@@ -167,20 +164,20 @@ const renderOrderChart = () => {
           })),
         },
       ],
-    };
-    if (!pieChart) {
-      pieChart = echarts.init(pieRef.value);
     }
-    (pieChart as ECharts).setOption(option);
+    if (!pieChart) {
+      pieChart = echarts.init(pieRef.value)
+    }
+    ;(pieChart as ECharts).setOption(option)
   }
-};
+}
 
 const renderServiceChart = () => {
-  const chartData = serviceData.value as ServiceStatisticsData;
+  const chartData = serviceData.value as ServiceStatisticsData
 
   if (barRef.value) {
     if (!barChart) {
-      barChart = echarts.init(barRef.value);
+      barChart = echarts.init(barRef.value)
     }
 
     const option: echarts.EChartsCoreOption = {
@@ -218,22 +215,22 @@ const renderServiceChart = () => {
           data: chartData.map((item) => item.NUM_),
         },
       ],
-    };
-    (barChart as ECharts).setOption(option);
+    }
+    ;(barChart as ECharts).setOption(option)
   }
-};
+}
 
 onMounted(() => {
-  fetchOrderData();
-  fetchServiceData();
+  fetchOrderData()
+  fetchServiceData()
   // watchEffect(() => {
   //   orderData.value && renderOrderChart();
   //   serviceData.value && renderServiceChart();
   // });
-});
+})
 </script>
 <script lang="ts">
-export default { name: 'StatisticsView' };
+export default { name: 'StatisticsView' }
 </script>
 <style scoped lang="scss">
 @import '@/styles/variables.scss';

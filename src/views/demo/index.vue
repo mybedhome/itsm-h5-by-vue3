@@ -1,22 +1,22 @@
 <script lang="jsx">
-import EchartDemo from './echart.vue';
-import { toRaw } from 'vue';
+import EchartDemo from './echart.vue'
+import { toRaw } from 'vue'
 export default {
   name: 'App',
   data() {
     return {
       chartData: [],
-    };
+    }
   },
   mounted() {
     fetch('/api/orders/steps')
       .then((res) => res.json())
       .then((data) => {
-        this.chartData = data;
-      });
+        this.chartData = data
+      })
   },
   render() {
-    const { chartData } = this;
+    const { chartData } = this
     return (
       <div class="container">
         <div class="echart">
@@ -93,17 +93,17 @@ export default {
           </table>
         </div>
       </div>
-    );
+    )
   },
   methods: {
     formatNumber(n) {
       return String(Math.floor(n * 100) / 100).replace(
         /\B(?=(\d{3})+(?!\d))/g,
         ','
-      );
+      )
     },
   },
-};
+}
 </script>
 
 <style scoped>

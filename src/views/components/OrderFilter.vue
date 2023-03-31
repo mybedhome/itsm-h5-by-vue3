@@ -51,62 +51,62 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, computed, watch } from 'vue';
-import type { PickerConfirmEventParams } from 'vant';
-import { OrderFilterKey, type Column } from '@/types/common';
-import dayjs from 'dayjs';
-import { utils } from '@/utils/index';
-import type { OrderFilterConfirmEventParams } from './OrderFilter';
+import { ref, shallowRef, computed, watch } from 'vue'
+import type { PickerConfirmEventParams } from 'vant'
+import { OrderFilterKey, type Column } from '@/types/common'
+import dayjs from 'dayjs'
+import { utils } from '@/utils/index'
+import type { OrderFilterConfirmEventParams } from './OrderFilter'
 
 const props = defineProps<{
-  show: boolean;
-  columns: Column[];
-}>();
+  show: boolean
+  columns: Column[]
+}>()
 
 const emit = defineEmits<{
-  (e: 'update:show', value: boolean): void;
-  (e: 'confirm', value: OrderFilterConfirmEventParams): void;
-}>();
+  (e: 'update:show', value: boolean): void
+  (e: 'confirm', value: OrderFilterConfirmEventParams): void
+}>()
 
 const isShow = computed({
   get() {
-    return props.show;
+    return props.show
   },
   set(value) {
-    emit('update:show', value);
+    emit('update:show', value)
   },
-});
+})
 
 const timeColumn = computed(() =>
   props.columns.find((col) => col.key === OrderFilterKey.CREATE_TIME)
-);
+)
 
 const initDefaultDate = () => [
   dayjs().subtract(1, 'month').toDate(),
   new Date(),
-];
-const defaultDate = ref(initDefaultDate());
-const minDate = dayjs().subtract(2, 'year').toDate();
+]
+const defaultDate = ref(initDefaultDate())
+const minDate = dayjs().subtract(2, 'year').toDate()
 
 const formatDate = ([start, end]: Date[]) => {
-  if (!start || !end) return '';
-  const mode = 'YYYY/MM/DD';
-  return `${dayjs(start).format(mode)} - ${dayjs(end).format(mode)}`;
-};
+  if (!start || !end) return ''
+  const mode = 'YYYY/MM/DD'
+  return `${dayjs(start).format(mode)} - ${dayjs(end).format(mode)}`
+}
 
 const initModelValue = {
   service: '',
   status: '',
   creator: '',
   createTime: formatDate(defaultDate.value),
-};
-const model = ref({ ...initModelValue });
+}
+const model = ref({ ...initModelValue })
 
-type modelKey = keyof typeof model.value;
-type IModel = Record<modelKey, string>;
+type modelKey = keyof typeof model.value
+type IModel = Record<modelKey, string>
 
-const activeKey = ref<modelKey>('' as modelKey);
-const activeLabel = ref('');
+const activeKey = ref<modelKey>('' as modelKey)
+const activeLabel = ref('')
 
 // 确认选中的过滤条件
 const selected = shallowRef<OrderFilterConfirmEventParams>([
@@ -115,134 +115,134 @@ const selected = shallowRef<OrderFilterConfirmEventParams>([
     name: model.value.createTime,
     value: [defaultDate.value[0].getTime(), defaultDate.value[1].getTime()],
   },
-]);
+])
 
 // 最后一次确认选中的状态
-let lastSaveSelected: OrderFilterConfirmEventParams = [];
-let lastSaveModel = {} as IModel;
+let lastSaveSelected: OrderFilterConfirmEventParams = []
+let lastSaveModel = {} as IModel
 
 // 弹窗显示后从最后一次保存状态中恢复数据
 const onActionSheetOpen = () => {
-  restoreState();
-};
+  restoreState()
+}
 
 const restoreState = () => {
   if (!utils.isEmptyObject(lastSaveModel)) {
-    model.value = { ...lastSaveModel };
-    selected.value = [...lastSaveSelected];
+    model.value = { ...lastSaveModel }
+    selected.value = [...lastSaveSelected]
   }
-};
+}
 
 const resetLastSaveState = () => {
-  lastSaveSelected = [] as OrderFilterConfirmEventParams;
-  lastSaveModel = {} as IModel;
-};
+  lastSaveSelected = [] as OrderFilterConfirmEventParams
+  lastSaveModel = {} as IModel
+}
 
 const customFieldName = computed(() => {
   switch (activeKey.value) {
     case OrderFilterKey.SERVICE:
-      return { text: 'serviceName', value: 'serviceId' };
+      return { text: 'serviceName', value: 'serviceId' }
     case OrderFilterKey.CREATOR:
-      return { text: 'firstName', value: 'id' };
+      return { text: 'firstName', value: 'id' }
     default:
-      return { text: 'text', value: 'value' };
+      return { text: 'text', value: 'value' }
   }
-});
+})
 
-const pickerColumns = ref([]);
-const pickerSelected = ref<any[]>([]);
-const showCalendar = ref(false);
-const showPicker = ref(false);
+const pickerColumns = ref([])
+const pickerSelected = ref<any[]>([])
+const showCalendar = ref(false)
+const showPicker = ref(false)
 
 watch(activeLabel, () => {
   const activeItem = selected.value.find(
     (item) => item.label === activeLabel.value
-  );
+  )
 
   if (activeItem) {
-    pickerSelected.value[0] = activeItem.value;
+    pickerSelected.value[0] = activeItem.value
   }
-});
+})
 
 const onFieldClick = (field: modelKey, data: any, label: string) => {
-  activeKey.value = field;
-  activeLabel.value = label;
+  activeKey.value = field
+  activeLabel.value = label
   if (field === OrderFilterKey.CREATE_TIME) {
-    showCalendar.value = true;
+    showCalendar.value = true
   } else {
-    pickerColumns.value = data;
-    showPicker.value = true;
+    pickerColumns.value = data
+    showPicker.value = true
   }
-};
+}
 
 const onFieldClear = (key: modelKey, label: string) => {
-  model.value[key] = '';
-  pickerSelected.value = [];
-  const index = findIndex(label);
-  selected.value.splice(index, 1);
-};
+  model.value[key] = ''
+  pickerSelected.value = []
+  const index = findIndex(label)
+  selected.value.splice(index, 1)
+}
 
 const findIndex = (label: string) => {
-  return selected.value.findIndex((item) => item.label === label);
-};
+  return selected.value.findIndex((item) => item.label === label)
+}
 
 const onConfirm = (params: PickerConfirmEventParams) => {
   const selectedOptions = params.selectedOptions as Array<
     Record<string, string>
-  >;
+  >
 
-  const text = customFieldName.value.text;
-  const id = customFieldName.value.value;
-  const name = selectedOptions[0][text] as modelKey;
-  const value = selectedOptions[0][id];
+  const text = customFieldName.value.text
+  const id = customFieldName.value.value
+  const name = selectedOptions[0][text] as modelKey
+  const value = selectedOptions[0][id]
 
-  model.value[activeKey.value] = name;
+  model.value[activeKey.value] = name
 
-  const index = findIndex(activeLabel.value);
-  const item = { name, value, label: activeLabel.value };
+  const index = findIndex(activeLabel.value)
+  const item = { name, value, label: activeLabel.value }
   if (index === -1) {
-    selected.value.push(item);
+    selected.value.push(item)
   } else {
-    selected.value.splice(index, 1, item);
+    selected.value.splice(index, 1, item)
   }
-  showPicker.value = false;
-};
+  showPicker.value = false
+}
 
 const onConfirmDate = ([start, end]: Date[]) => {
-  model.value.createTime = formatDate([start, end]);
-  const index = findIndex(activeLabel.value);
+  model.value.createTime = formatDate([start, end])
+  const index = findIndex(activeLabel.value)
   const item = {
     name: model.value.createTime,
     value: [start.getTime(), end.getTime()],
     label: activeLabel.value,
-  };
-  if (index === -1) {
-    selected.value.push(item);
-  } else {
-    selected.value.splice(index, 1, item);
   }
-  showCalendar.value = false;
-};
+  if (index === -1) {
+    selected.value.push(item)
+  } else {
+    selected.value.splice(index, 1, item)
+  }
+  showCalendar.value = false
+}
 
 const resetForm = () => {
-  model.value = { ...initModelValue };
-  model.value.createTime = '';
-  pickerSelected.value = [];
-  defaultDate.value = [];
-  selected.value = [];
-};
+  model.value = { ...initModelValue }
+  model.value.createTime = ''
+  pickerSelected.value = []
+  defaultDate.value = []
+  selected.value = []
+}
 
 const submitForm = () => {
-  lastSaveSelected = [...selected.value];
-  lastSaveModel = { ...model.value };
-  emit('confirm', lastSaveSelected);
-};
+  lastSaveSelected = [...selected.value]
+  lastSaveModel = { ...model.value }
+  emit('confirm', lastSaveSelected)
+}
 
 const clearState = () => {
-  resetForm();
-  resetLastSaveState();
-};
-defineExpose<Record<string, typeof clearState>>({ clearState });
+  resetForm()
+  resetLastSaveState()
+}
+defineExpose<Record<string, typeof clearState>>({ clearState })
 </script>
 
 <style scoped lang="scss">

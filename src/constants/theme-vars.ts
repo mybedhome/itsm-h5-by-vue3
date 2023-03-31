@@ -1,5 +1,5 @@
-import type { ConfigProviderThemeVars } from 'vant';
-import { utils } from '@/utils';
+import type { ConfigProviderThemeVars } from 'vant'
+import { utils } from '@/utils'
 export const themeVars: ConfigProviderThemeVars = {
   searchInputHeight: '32px',
   buttonSmallHeight: '32px',
@@ -9,4 +9,4 @@ export const themeVars: ConfigProviderThemeVars = {
   buttonPrimaryBackground: '#4b6eef',
   buttonPrimaryBorderColor: '#4b6eef',
   actionSheetMaxHeight: '90%',
-};
+}

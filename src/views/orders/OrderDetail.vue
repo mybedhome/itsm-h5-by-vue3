@@ -8,5 +8,5 @@
 </template>
 
 <script setup lang="ts">
-import { RouteName } from '@/router';
+import { RouteName } from '@/router'
 </script>

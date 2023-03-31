@@ -30,31 +30,31 @@
 </template>
 
 <script setup lang="ts">
-import type { OrderListData } from '@/services/model/orderModel';
-import dayjs from 'dayjs';
-import { useRouter } from 'vue-router';
-const router = useRouter();
-const props = defineProps<{ data: OrderListData }>();
+import type { OrderListData } from '@/services/model/orderModel'
+import dayjs from 'dayjs'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const props = defineProps<{ data: OrderListData }>()
 
 const getOrderStatusMap = (status: number) => {
   switch (status) {
     case 1:
-      return { text: '处理中', className: 'order-info-status-processing' };
+      return { text: '处理中', className: 'order-info-status-processing' }
     case 2:
-      return { text: '已完成', className: 'order-info-status-finished' };
+      return { text: '已完成', className: 'order-info-status-finished' }
     default:
-      return { text: '已撤销', className: 'order-info-status-revoked' };
+      return { text: '已撤销', className: 'order-info-status-revoked' }
   }
-};
-const formatDate = (d: number) => dayjs(d).format('YYYY-MM-DD HH:mm:ss');
+}
+const formatDate = (d: number) => dayjs(d).format('YYYY-MM-DD HH:mm:ss')
 
 const displayAvatarText = (name: string) => {
-  return /^\w/.test(name) ? name.slice(0, 1) : name.slice(-2);
-};
+  return /^\w/.test(name) ? name.slice(0, 1) : name.slice(-2)
+}
 
 const handleJump = () => {
-  router.push({ name: 'demo' });
-};
+  router.push({ name: 'demo' })
+}
 </script>
 
 <style scoped lang="scss">

@@ -1,5 +1,5 @@
 /* eslint-env node */
-require('@rushstack/eslint-patch/modern-module-resolution');
+require('@rushstack/eslint-patch/modern-module-resolution')
 
 module.exports = {
   root: true,
@@ -21,8 +21,9 @@ module.exports = {
       'error',
       {
         singleQuote: true,
+        semi: false,
       },
     ],
     'vue/multi-word-component-names': 'off',
   },
-};
+}

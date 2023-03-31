@@ -6,21 +6,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { RouteName } from '@/router';
-import { useRouter, useRoute } from 'vue-router';
+import { ref } from 'vue'
+import { RouteName } from '@/router'
+import { useRouter, useRoute } from 'vue-router'
 
-const router = useRouter();
-const route = useRoute();
-const active = ref(route.name === RouteName.WORKBENCH ? 0 : 1);
+const router = useRouter()
+const route = useRoute()
+const active = ref(route.name === RouteName.WORKBENCH ? 0 : 1)
 
 const handleChange = (index: number) => {
   if (index === 0) {
-    router.replace({ name: RouteName.WORKBENCH });
+    router.replace({ name: RouteName.WORKBENCH })
   } else {
-    router.replace({ name: RouteName.STATISTICS });
+    router.replace({ name: RouteName.STATISTICS })
   }
-};
+}
 </script>
 
 <style scoped></style>

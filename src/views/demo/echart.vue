@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import * as echarts from 'echarts/core';
+import { onMounted } from 'vue'
+import * as echarts from 'echarts/core'
 import {
   TooltipComponent,
   type TooltipComponentOption,
@@ -12,11 +12,11 @@ import {
   type GridComponentOption,
   DataZoomComponent,
   type DataZoomComponentOption,
-} from 'echarts/components';
-import { BarChart, type BarSeriesOption } from 'echarts/charts';
-import { CanvasRenderer } from 'echarts/renderers';
+} from 'echarts/components'
+import { BarChart, type BarSeriesOption } from 'echarts/charts'
+import { CanvasRenderer } from 'echarts/renderers'
 
-const props = defineProps(['data']);
+const props = defineProps(['data'])
 
 echarts.use([
   TooltipComponent,
@@ -24,24 +24,24 @@ echarts.use([
   DataZoomComponent,
   BarChart,
   CanvasRenderer,
-]);
+])
 
 type EChartsOption = echarts.ComposeOption<
   | TooltipComponentOption
   | GridComponentOption
   | DataZoomComponentOption
   | BarSeriesOption
->;
+>
 
 onMounted(() => {
   setTimeout(() => {
-    init();
-  }, 1000);
-});
+    init()
+  }, 1000)
+})
 
 const init = () => {
-  const chartDom = document.getElementById('main')!;
-  const myChart = echarts.init(chartDom);
+  const chartDom = document.getElementById('main')!
+  const myChart = echarts.init(chartDom)
   const option: EChartsOption = {
     tooltip: {
       trigger: 'axis',
@@ -88,15 +88,15 @@ const init = () => {
         large: true,
       },
     ],
-  };
-  const start = Date.now();
+  }
+  const start = Date.now()
   myChart.on('finished', () => {
-    console.log('finsihed', Date.now() - start);
-    myChart.off('finished');
-  });
+    console.log('finsihed', Date.now() - start)
+    myChart.off('finished')
+  })
 
-  myChart.setOption(option);
-};
+  myChart.setOption(option)
+}
 </script>
 
 <style scoped>

@@ -1,1 +1,1 @@
-import 'echarts/lib/chart/pie';
+import 'echarts/lib/chart/pie'

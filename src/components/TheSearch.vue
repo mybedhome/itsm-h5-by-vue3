@@ -23,41 +23,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-const props = defineProps(['modelValue']);
+import { ref, computed } from 'vue'
+const props = defineProps(['modelValue'])
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void;
-  (e: 'action', value: string): void;
-}>();
+  (e: 'update:modelValue', value: string): void
+  (e: 'action', value: string): void
+}>()
 const value = computed({
   get() {
-    return props.modelValue;
+    return props.modelValue
   },
   set(value) {
-    emit('update:modelValue', value);
+    emit('update:modelValue', value)
   },
-});
+})
 
-const buttonText = ref('筛选');
+const buttonText = ref('筛选')
 
-const onClear = () => console.log('cleard');
+const onClear = () => console.log('cleard')
 const onFocus = () => {
-  buttonText.value = '取消';
-};
+  buttonText.value = '取消'
+}
 
-const onBlur = () => {};
+const onBlur = () => {}
 
 const handleAction = () => {
-  emit('action', buttonText.value);
+  emit('action', buttonText.value)
   if (buttonText.value === '取消') {
-    buttonText.value = '筛选';
+    buttonText.value = '筛选'
   }
-};
+}
 </script>
 <script lang="ts">
 export default {
   inheritAttrs: false,
-};
+}
 </script>
 
 <style scoped>
