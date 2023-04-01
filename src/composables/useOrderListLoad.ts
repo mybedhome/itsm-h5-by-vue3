@@ -5,10 +5,7 @@ import type {
 import { getOrders } from '@/services/orders'
 import { ref, unref, type Ref, watch } from 'vue'
 
-export function useOrderListLoad(
-  condition: Ref<OrderQueryCondition>,
-  props: any
-) {
+export function useOrderListLoad(condition: Ref<OrderQueryCondition>) {
   const loading = ref(false)
   const finished = ref(false)
   const data = ref<OrderListData>([])
