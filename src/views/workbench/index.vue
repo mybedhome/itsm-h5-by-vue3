@@ -118,8 +118,6 @@ const count = ref(0)
 
 ;(async () => {
   const { data, error } = await getTotoItemTotal()
-  console.log('error', error)
-  console.log('data', data)
   count.value = data
 })()
 
