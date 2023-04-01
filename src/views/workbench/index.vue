@@ -132,10 +132,8 @@ const { columns, filterResult, condition } = useOrderFilter({
   ...props,
   isWorkbenchRoute,
 })
-const { loading, finished, data, onLoad, isSearchMode } = useOrderListLoad(
-  condition,
-  props
-)
+const { loading, finished, data, onLoad, isSearchMode } =
+  useOrderListLoad(condition)
 
 onLoad()
 
