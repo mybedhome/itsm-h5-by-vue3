@@ -11,18 +11,18 @@
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "precommit": "lint-staged"
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged"
+      "commit-msg": "./node_modules/.bin/commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "lint-staged": {
-    "*.{vue,js,jsx,ts,tsx,json}": [
-      "eslint --fix",
-      "prettier --write src/",
+    "*.{vue,js,jsx,ts,tsx}": [
+      "npm run lint",
+      "npm run format",
       "git add"
     ]
   },

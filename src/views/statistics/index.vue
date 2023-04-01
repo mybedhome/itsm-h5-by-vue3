@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watchEffect, watch, reactive } from 'vue'
+import { ref, onMounted, computed, watch, reactive } from 'vue'
 // import * as echarts from 'echarts/core';
 // import { PieChart, BarChart } from 'echarts/charts';
 // import { GridComponent } from 'echarts/components';
